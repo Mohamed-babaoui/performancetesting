@@ -69,12 +69,7 @@ public abstract class BaseTest {
 
     @BeforeMethod
     public void setUp() throws IOException {
-        // Set up ChromeOptions
-        ChromeOptions options = new ChromeOptions();
-        options.setAcceptInsecureCerts(true); // Accept insecure certificates
-
-        // Initialize WebDriver with the options
-     //   WebDriverManager.chromedriver().setup();
+      
         driver = setUpRemoteChromeDriver();
     }
 
