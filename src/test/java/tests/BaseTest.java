@@ -6,9 +6,13 @@ import io.github.bonigarcia.wdm.WebDriverManager;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.annotations.*;
+import java.net.URL;
 
+
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
@@ -64,17 +68,14 @@ public abstract class BaseTest {
     }
 
     @BeforeMethod
-    public void setUp() {
+    public void setUp() throws IOException {
         // Set up ChromeOptions
         ChromeOptions options = new ChromeOptions();
         options.setAcceptInsecureCerts(true); // Accept insecure certificates
 
         // Initialize WebDriver with the options
         WebDriverManager.chromedriver().setup();
-        driver = new ChromeDriver(options);
-
-        // Maximize the browser window
-        driver.manage().window().maximize();
+        driver = setUpRemoteChromeDriver();
     }
 
     @AfterMethod
@@ -85,4 +86,23 @@ public abstract class BaseTest {
             driver.quit();
         }
     }
+
+    private WebDriver setUpRemoteChromeDriver() throws IOException {
+        ChromeOptions options = new ChromeOptions();
+        options.addArguments("--disable-notifications");
+        options.addArguments("--disable-dev-shm-usage");
+        options.addArguments("--no-sandbox");
+        options.addArguments("--ignore-certificate-errors");
+        options.addArguments("--disable-extensions");
+        options.addArguments("--incognito");
+        options.addArguments("--disable-search-engine-choice-screen");
+        options.setAcceptInsecureCerts(true); // Updated for Selenium 4.22        // Set SSL properties
+        System.setProperty("javax.net.ssl.trustStore", "src" + File.separator + "pvcp-intermidate.jks");
+        System.setProperty("javax.net.ssl.trustStorePassword", "97460480");
+        Properties props = new Properties();
+        props.load(getClass().getClassLoader().getResourceAsStream("seleniumHub.properties"));
+        URL remoteUrl = new URL(props.getProperty("URL_Remote"));
+            return new RemoteWebDriver(remoteUrl, options);
+        }
+
 }
