@@ -7,22 +7,31 @@ stages:
 variables:
   MAVEN_OPTS: "-Dmaven.repo.local=.m2/repository"
 
-cache:
+cache:  
   paths:
     - .m2/repository
 
 before_script:
   - echo "Setting up Maven and JDK 17 environment"
   - mvn --version
+  - java -version  # Optional: Check JDK version
 
 build:
   stage: build
+  tags:
+    - azure
+    - docker
+    - testing
   script:
     - echo "Building the project"
     - mvn clean compile
 
 test:
   stage: test
+  tags:
+    - azure
+    - docker
+    - testing
   script:
     - echo "Running TestNG tests "
     - mvn test -Dduration=500
