@@ -74,7 +74,7 @@ public abstract class BaseTest {
         options.setAcceptInsecureCerts(true); // Accept insecure certificates
 
         // Initialize WebDriver with the options
-        WebDriverManager.chromedriver().setup();
+     //   WebDriverManager.chromedriver().setup();
         driver = setUpRemoteChromeDriver();
     }
 
