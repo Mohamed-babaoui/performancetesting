@@ -1,37 +1,26 @@
-image: maven:3.8.7-openjdk-17
+default:
+  image: maven:3.8.5-openjdk-17
+  tags:
+    - azure
+    - docker
+    - testing
+
+cache:
+  paths:
+    - .m2/repository/
+  key: maven-$CI_COMMIT_REF_SLUG
 
 stages:
   - build
   - test
 
-variables:
-  MAVEN_OPTS: "-Dmaven.repo.local=.m2/repository"
-
-cache:  
-  paths:
-    - .m2/repository
-
-before_script:
-  - echo "Setting up Maven and JDK 17 environment"
-  - mvn --version
-  - java -version  # Optional: Check JDK version
-
-build:
+build-job:
   stage: build
-  tags:
-    - azure
-    - docker
-    - testing
   script:
-    - echo "Building the project"
-    - mvn clean compile
+     - mvn clean compile
 
-test:
+test-job:
   stage: test
-  tags:
-    - azure
-    - docker
-    - testing
   script:
     - echo "Running TestNG tests "
     - mvn test -Dduration=500
