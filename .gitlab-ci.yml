@@ -38,7 +38,6 @@ test:
 
   # Save test-output folder as an artifact
   artifacts:
-    when: always
     paths:
       - test-output/
-    expire_in: 1 week
+    
