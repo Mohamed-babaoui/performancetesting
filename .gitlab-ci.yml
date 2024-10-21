@@ -1,0 +1,35 @@
+image: maven:3.8.7-openjdk-17
+
+stages:
+  - build
+  - test
+
+variables:
+  MAVEN_OPTS: "-Dmaven.repo.local=.m2/repository"
+
+cache:
+  paths:
+    - .m2/repository
+
+before_script:
+  - echo "Setting up Maven and JDK 17 environment"
+  - mvn --version
+
+build:
+  stage: build
+  script:
+    - echo "Building the project"
+    - mvn clean compile
+
+test:
+  stage: test
+  script:
+    - echo "Running TestNG tests"
+    - mvn test -Dduration=500
+
+  # Save test-output folder as an artifact
+  artifacts:
+    when: always
+    paths:
+      - test-output/
+    expire_in: 1 week
