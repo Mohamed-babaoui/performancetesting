@@ -4,17 +4,15 @@ import com.aventstack.extentreports.*;
 import com.aventstack.extentreports.reporter.ExtentSparkReporter;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.annotations.*;
-import java.net.URL;
-
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 import java.util.Properties;
 
 public abstract class BaseTest {
@@ -24,20 +22,19 @@ public abstract class BaseTest {
     protected Properties testData;
     protected static ExtentReports extent;
     protected ExtentTest test;
-    protected WebDriverWait wait=new WebDriverWait(driver, java.time.Duration.ofSeconds(100));
-
+    protected WebDriverWait wait;
 
     @BeforeSuite
     public void setupSuite() {
         // Initialize ExtentReports
-        ExtentSparkReporter htmlReporter = new ExtentSparkReporter  ("test-output/ExtentReports.html");
+        ExtentSparkReporter htmlReporter = new ExtentSparkReporter("test-output/ExtentReports.html");
         extent = new ExtentReports();
         extent.attachReporter(htmlReporter);
 
         // Optional: Set system info or configuration details
         extent.setSystemInfo("OS", System.getProperty("os.name"));
         extent.setSystemInfo("Browser", "Chrome");
-        extent.setSystemInfo("Tester", "Automation Team ");
+        extent.setSystemInfo("Tester", "Automation Team");
     }
 
     @AfterSuite
@@ -69,8 +66,9 @@ public abstract class BaseTest {
 
     @BeforeMethod
     public void setUp() throws IOException {
-      
         driver = setUpRemoteChromeDriver();
+        // Initialize WebDriverWait after WebDriver is initialized
+        wait = new WebDriverWait(driver, java.time.Duration.ofSeconds(100));
     }
 
     @AfterMethod
@@ -91,13 +89,34 @@ public abstract class BaseTest {
         options.addArguments("--disable-extensions");
         options.addArguments("--incognito");
         options.addArguments("--disable-search-engine-choice-screen");
-        options.setAcceptInsecureCerts(true); // Updated for Selenium 4.22        // Set SSL properties
-        System.setProperty("javax.net.ssl.trustStore", "src" + File.separator + "pvcp-intermidate.jks");
-        System.setProperty("javax.net.ssl.trustStorePassword", "97460480");
-        Properties props = new Properties();
-        props.load(getClass().getClassLoader().getResourceAsStream("seleniumHub.properties"));
-        URL remoteUrl = new URL(props.getProperty("URL_Remote"));
-            return new RemoteWebDriver(remoteUrl, options);
+        options.setAcceptInsecureCerts(true); // Accept insecure certificates
+
+        // Set SSL properties, ensure the trustStore file exists
+        String trustStorePath = "src" + File.separator + "pvcp-intermidate.jks";
+        File trustStoreFile = new File(trustStorePath);
+        if (trustStoreFile.exists()) {
+            System.setProperty("javax.net.ssl.trustStore", trustStoreFile.getAbsolutePath());
+            System.setProperty("javax.net.ssl.trustStorePassword", "97460480");
+        } else {
+            throw new IOException("Trust store file not found: " + trustStoreFile.getAbsolutePath());
         }
 
+        // Load Selenium Grid properties
+        Properties props = new Properties();
+        InputStream seleniumHubProps = getClass().getClassLoader().getResourceAsStream("seleniumHub.properties");
+        if (seleniumHubProps == null) {
+            throw new IOException("Selenium hub properties file 'seleniumHub.properties' not found");
+        }
+        props.load(seleniumHubProps);
+
+        // Get remote URL for Selenium Grid
+        String remoteUrlString = props.getProperty("URL_Remote");
+        if (remoteUrlString == null || remoteUrlString.isEmpty()) {
+            throw new IOException("URL_Remote is not configured in seleniumHub.properties");
+        }
+        URL remoteUrl = new URL(remoteUrlString);
+
+        // Initialize and return RemoteWebDriver
+        return new RemoteWebDriver(remoteUrl, options);
+    }
 }
