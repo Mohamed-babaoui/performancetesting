@@ -63,21 +63,24 @@ public abstract class BaseTest {
         testData.load(testDataInput);
     }
 
-    @BeforeMethod
-    public void setUp() throws IOException {
-        // Setup ChromeDriver using WebDriverManager
-        WebDriverManager.chromedriver().setup();
-        
-        ChromeOptions options = new ChromeOptions();
-        options.addArguments("--headless");  // Set to true if running in headless environments (CI, Docker)
-        options.setAcceptInsecureCerts(true); // Accept insecure certificates if necessary
+   @BeforeMethod
+public void setUp() throws IOException {
+    WebDriverManager.chromedriver().setup();
+    
+    ChromeOptions options = new ChromeOptions();
+    options.addArguments("--no-sandbox");  // Required in Docker/CI environments
+    options.addArguments("--disable-dev-shm-usage");  // Prevent shared memory issues in Docker
+    options.addArguments("--disable-gpu");  // Disable GPU in headless mode
+    options.addArguments("--headless");  // Enable headless mode for CI
+    options.addArguments("--remote-allow-origins=*");  // Avoid origin issues with newer Chrome versions
+    options.setAcceptInsecureCerts(true);  // Accept insecure certificates if necessary
 
-        // Initialize local ChromeDriver
-        driver = new ChromeDriver(options);
+    // Initialize ChromeDriver
+    driver = new ChromeDriver(options);
 
-        // Initialize WebDriverWait after WebDriver is initialized
-        wait = new WebDriverWait(driver, java.time.Duration.ofSeconds(100));
-    }
+    // Initialize WebDriverWait
+    wait = new WebDriverWait(driver, java.time.Duration.ofSeconds(100));
+}
 
     @AfterMethod
     public void tearDown() {
