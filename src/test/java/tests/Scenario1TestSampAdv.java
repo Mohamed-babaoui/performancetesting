@@ -213,6 +213,7 @@ public class Scenario1TestSampAdv extends BaseTest {
 
                 // Get Booking Number (not sampled)
                 try {
+                    Thread.sleep(3000);
                     String bookingNumber = reservationPage.getBookingNumber();
                     reservationPage.clickOkOnBookingConfirmation();
                     Thread.sleep(3000);

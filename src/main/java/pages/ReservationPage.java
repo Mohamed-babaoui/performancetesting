@@ -41,7 +41,6 @@ public class ReservationPage extends BasePage {
         Thread.sleep(10000);
         retryingFindClick(assuranceOptionButton);
         Thread.sleep(10000);
-
         retryingFindClick(bookingConfirmationOkButton);
     }
 
