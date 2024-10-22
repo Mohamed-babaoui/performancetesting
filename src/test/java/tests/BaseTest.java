@@ -69,7 +69,7 @@ public abstract class BaseTest {
         WebDriverManager.chromedriver().setup();
         
         ChromeOptions options = new ChromeOptions();
-        options.setHeadless(true); // Set to true if running in headless environments (CI, Docker)
+        options.addArguments("--headless");  // Set to true if running in headless environments (CI, Docker)
         options.setAcceptInsecureCerts(true); // Accept insecure certificates if necessary
 
         // Initialize local ChromeDriver
