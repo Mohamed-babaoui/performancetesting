@@ -1,16 +1,18 @@
-<!-- testng.xml -->
 <!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
 <suite name="Performance Test Suite Sample" parallel="tests" thread-count="2">
     <test name="Scenario1">
-        <parameter name="duration" value="3600" />
+        <parameter name="duration" value="${duration}" /> <!-- Use Maven property for dynamic duration -->
         <classes>
             <class name="tests.Scenario1TestSampAdv"/>
         </classes>
     </test>
-    <!--test name="Scenario2">
-        <parameter name="duration" value="500" />
+    <!-- Uncomment the following section if you want to enable Scenario2 with dynamic duration as well -->
+    <!-- 
+    <test name="Scenario2">
+        <parameter name="duration" value="${duration}" /> 
         <classes>
-            <class name="tests.tests.Scenario2TestSampAdv"/>
+            <class name="tests.Scenario2TestSampAdv"/>
         </classes>
-    </test-->
+    </test>
+    -->
 </suite>
