@@ -224,6 +224,7 @@ public class Scenario2TestSampAdv extends BaseTest {
 
                 // Get Booking Number
                 try {
+                    Thread.sleep(3000);
                     String bookingNumber = reservationPage.getBookingNumber();
                     reservationPage.clickOkOnBookingConfirmation();
                     Thread.sleep(3000);
@@ -259,7 +260,6 @@ public class Scenario2TestSampAdv extends BaseTest {
                 // Post-confirmation actions
                 try {
                     Thread.sleep(1000);
-
                     confirmationPage.cancelBooking();
                     Thread.sleep(500);
                 } catch (Exception e) {
