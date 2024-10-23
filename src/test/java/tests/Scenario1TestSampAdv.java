@@ -371,6 +371,10 @@ public class Scenario1TestSampAdv extends BaseTest {
         test = extent.createTest("Scenario1TestAdv");
         long testStartTime = System.currentTimeMillis();
         long endTime = testStartTime + duration * 1000; // Convert duration to milliseconds
+            System.out.println("Start Time :"+testStartTime);
+            System.out.println("End Time :"+endTime);
+            System.out.println("Duration is : "+duration);
+
 
         // Initialize DevTools for network monitoring
         devTools = ((ChromeDriver) driver).getDevTools();
@@ -402,6 +406,7 @@ public class Scenario1TestSampAdv extends BaseTest {
 
         while (System.currentTimeMillis() < endTime) {
             try {
+                System.out.println("Time Now is: "+System.currentTimeMillis());
                 // Load test data
                 String baseUrl = testData.getProperty("URL");
                 String username = config.getProperty("username");
@@ -421,6 +426,7 @@ public class Scenario1TestSampAdv extends BaseTest {
                 currentAction = "LoginPage";
                 sampler.sampleStart(currentAction);
                 try {
+                    
                     loginPage.goToApp(baseUrl);
                     // Fetch data sizes
                     long bytesSent = getTotalBytesSent();
