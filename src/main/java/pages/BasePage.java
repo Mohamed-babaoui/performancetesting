@@ -34,7 +34,7 @@ public abstract class BasePage {
             attempts++;
         }
     }*/
-    public void retryingFindClickPb(By by) {
+    public void retryingFindClick(By by) {
     int attempts = 0;
     while (attempts < 5) {
         try {
