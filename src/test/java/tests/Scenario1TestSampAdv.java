@@ -1,342 +1,8 @@
-/*package tests;
-
-import com.aventstack.extentreports.markuputils.MarkupHelper;
-import org.openqa.selenium.By;
-import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.devtools.DevTools;
-import org.openqa.selenium.devtools.v113.network.Network;
-import org.openqa.selenium.devtools.v113.network.model.Request;
-import org.openqa.selenium.devtools.v113.network.model.Response;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.testng.Assert;
-import org.testng.annotations.Parameters;
-import org.testng.annotations.Test;
-import pages.*;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-
-
-public class Scenario1TestSampAdv extends BaseTest {
-
-    private static final Logger logger = LoggerFactory.getLogger(Scenario1TestSampAdv.class);
-
-    // Instantiate the PerformanceSamplerAdv
-    private PerformanceSamplerAdv sampler = new PerformanceSamplerAdv();
-
-    // DevTools and network data collections
-    private DevTools devTools;
-    private Map<String, Long> requestSizes = new HashMap<>();
-    private Map<String, Long> responseSizes = new HashMap<>();
-    private final By usernameField = By.id("inputLoginUserName");
-
-
-    @Parameters({"duration"})
-    @Test
-    public void testScenario1Adv(long duration) {
-        test = extent.createTest("Scenario1TestAdv");
-        long testStartTime = System.currentTimeMillis();
-        long endTime = testStartTime + duration * 1000; // Convert duration to milliseconds
-
-        // Initialize DevTools for network monitoring
-        devTools = ((ChromeDriver) driver).getDevTools();
-        devTools.createSession();
-
-        // Enable Network tracking
-        devTools.send(Network.enable(Optional.empty(), Optional.empty(), Optional.empty()));
-
-        // Set up listeners to capture request and response sizes
-        devTools.addListener(Network.requestWillBeSent(), requestSent -> {
-            String requestId = requestSent.getRequestId().toString();
-            Request request = requestSent.getRequest();
-            long requestSize = estimateRequestSize(request);
-            synchronized (requestSizes) {
-                requestSizes.put(requestId, requestSize);
-            }
-        });
-
-        devTools.addListener(Network.responseReceived(), responseReceived -> {
-            String requestId = responseReceived.getRequestId().toString();
-            Response response = responseReceived.getResponse();
-            long responseSize = (long) response.getEncodedDataLength();
-            synchronized (responseSizes) {
-                responseSizes.put(requestId, responseSize);
-            }
-        });
-
-        String currentAction = "";
-
-        while (System.currentTimeMillis() < endTime) {
-            try {
-                // Load test data
-                String baseUrl = testData.getProperty("URL");
-                String username = config.getProperty("username");
-                String password = config.getProperty("password");
-                String site = testData.getProperty("Site");
-                String dateDebut = testData.getProperty("DateDebut");
-                String commentaire = testData.getProperty("Commentaire");
-
-                // Page Objects
-                LoginPage loginPage = new LoginPage(driver);
-                CustomerSearchPage customerSearchPage = new CustomerSearchPage(driver);
-                AvailabilityPage availabilityPage = new AvailabilityPage(driver);
-                ReservationPage reservationPage = new ReservationPage(driver);
-                ConfirmationPage confirmationPage = new ConfirmationPage(driver);
-
-                // Step 0: Login Page Loading
-                currentAction = "LoginPage";
-                sampler.sampleStart(currentAction);
-                try {
-                  loginPage.goToApp(baseUrl);
-                    // Fetch data sizes
-                    long bytesSent = getTotalBytesSent();
-                    long bytesReceived = getTotalBytesReceived();
-                    sampler.sampleEnd(currentAction, true, bytesSent, bytesReceived);
-                    logger.info("Navigated to {}", baseUrl);
-                    test.info("Navigated to " + baseUrl);
-                } catch (Exception e) {
-                    long bytesSent = getTotalBytesSent();
-                    long bytesReceived = getTotalBytesReceived();
-                    sampler.sampleEnd(currentAction, false, bytesSent, bytesReceived);
-                    logger.error("Error during {}: {}", currentAction, e.getMessage());
-                    test.fail("Error during " + currentAction + ": " + e.getMessage());
-                    // Continue to next action
-                }
-
-                // Step 1: Authorization
-                currentAction = "Authorization";
-                loginPage.loginCred(username, password);
-                sampler.sampleStart(currentAction);
-                try {
-
-                    loginPage.login();
-                    long bytesSent = getTotalBytesSent();
-                    long bytesReceived = getTotalBytesReceived();
-                    sampler.sampleEnd(currentAction, true, bytesSent, bytesReceived);
-                } catch (Exception e) {
-                    long bytesSent = getTotalBytesSent();
-                    long bytesReceived = getTotalBytesReceived();
-                    sampler.sampleEnd(currentAction, false, bytesSent, bytesReceived);
-                    logger.error("Error during {}: {}", currentAction, e.getMessage());
-                    test.fail("Error during " + currentAction + ": " + e.getMessage());
-                }
-
-                // Step 2: Fill Client Data
-                currentAction = "Fill Client Data";
-                customerSearchPage.searchCustomerByNameData("SANTIER", "JEAN-MARC", "50350");
-
-                sampler.sampleStart(currentAction);
-                try {
-                    customerSearchPage.selectCustomer();
-                    long bytesSent = getTotalBytesSent();
-                    long bytesReceived = getTotalBytesReceived();
-                    sampler.sampleEnd(currentAction, true, bytesSent, bytesReceived);
-                } catch (Exception e) {
-                    long bytesSent = getTotalBytesSent();
-                    long bytesReceived = getTotalBytesReceived();
-                    sampler.sampleEnd(currentAction, false, bytesSent, bytesReceived);
-                    logger.error("Error during {}: {}", currentAction, e.getMessage());
-                    test.fail("Error during " + currentAction + ": " + e.getMessage());
-                }
-
-                // Step 3: Client Found
-                currentAction = "Client Found";
-                sampler.sampleStart(currentAction);
-                try {
-                    customerSearchPage.goToAvailability();
-                    long bytesSent = getTotalBytesSent();
-                    long bytesReceived = getTotalBytesReceived();
-                    sampler.sampleEnd(currentAction, true, bytesSent, bytesReceived);
-                } catch (Exception e) {
-                    long bytesSent = getTotalBytesSent();
-                    long bytesReceived = getTotalBytesReceived();
-                    sampler.sampleEnd(currentAction, false, bytesSent, bytesReceived);
-                    logger.error("Error during {}: {}", currentAction, e.getMessage());
-                    test.fail("Error during " + currentAction + ": " + e.getMessage());
-                }
-
-                // Step 4: Search Availability
-                currentAction = "Search Availability";
-                availabilityPage.enterStartDate(dateDebut);
-                availabilityPage.selectSite(site);
-                sampler.sampleStart(currentAction);
-                try {
-                    availabilityPage.searchAvailability();
-                    long bytesSent = getTotalBytesSent();
-                    long bytesReceived = getTotalBytesReceived();
-                    sampler.sampleEnd(currentAction, true, bytesSent, bytesReceived);
-                } catch (Exception e) {
-                    long bytesSent = getTotalBytesSent();
-                    long bytesReceived = getTotalBytesReceived();
-                    sampler.sampleEnd(currentAction, false, bytesSent, bytesReceived);
-                    logger.error("Error during {}: {}", currentAction, e.getMessage());
-                    test.fail("Error during " + currentAction + ": " + e.getMessage());
-                }
-
-                // Step 5: Go To Reservation Detail
-                currentAction = "GoToReservationDetail";
-                sampler.sampleStart(currentAction);
-                try {
-                    availabilityPage.selectDestination();
-                    long bytesSent = getTotalBytesSent();
-                    long bytesReceived = getTotalBytesReceived();
-                    sampler.sampleEnd(currentAction, true, bytesSent, bytesReceived);
-                } catch (Exception e) {
-                    long bytesSent = getTotalBytesSent();
-                    long bytesReceived = getTotalBytesReceived();
-                    sampler.sampleEnd(currentAction, false, bytesSent, bytesReceived);
-                    logger.error("Error during {}: {}", currentAction, e.getMessage());
-                    test.fail("Error during " + currentAction + ": " + e.getMessage());
-                }
-
-                // Step 6: Fill Reservation Data
-                currentAction = "Fill Reservation Data";
-                sampler.sampleStart(currentAction);
-                try {
-                    reservationPage.fillReservationDetails(commentaire);
-                    long bytesSent = getTotalBytesSent();
-                    long bytesReceived = getTotalBytesReceived();
-                    sampler.sampleEnd(currentAction, true, bytesSent, bytesReceived);
-                } catch (Exception e) {
-                    long bytesSent = getTotalBytesSent();
-                    long bytesReceived = getTotalBytesReceived();
-                    sampler.sampleEnd(currentAction, false, bytesSent, bytesReceived);
-                    logger.error("Error during {}: {}", currentAction, e.getMessage());
-                    test.fail("Error during " + currentAction + ": " + e.getMessage());
-                }
-
-                // Get Booking Number (not sampled)
-                try {
-                    Thread.sleep(3000);
-                    String bookingNumber = reservationPage.getBookingNumber();
-                    reservationPage.clickOkOnBookingConfirmation();
-                    Thread.sleep(3000);
-
-                    logger.info("Booking Number: {}", bookingNumber);
-                    test.info("Booking Number: " + bookingNumber);
-
-                    // Assertions
-                    Assert.assertNotNull(bookingNumber, "Booking number should not be null");
-                    test.pass("Booking number is not null");
-                } catch (Exception e) {
-                    logger.error("Error getting booking number: {}", e.getMessage());
-                    test.fail("Error getting booking number: " + e.getMessage());
-                }
-
-                // Step 7: Confirmation
-                currentAction = "Confirmation";
-                sampler.sampleStart(currentAction);
-                try {
-                    reservationPage.confirmBooking();
-                    long bytesSent = getTotalBytesSent();
-                    long bytesReceived = getTotalBytesReceived();
-                    sampler.sampleEnd(currentAction, true, bytesSent, bytesReceived);
-                } catch (Exception e) {
-                    long bytesSent = getTotalBytesSent();
-                    long bytesReceived = getTotalBytesReceived();
-                    sampler.sampleEnd(currentAction, false, bytesSent, bytesReceived);
-                    logger.error("Error during {}: {}", currentAction, e.getMessage());
-                    test.fail("Error during " + currentAction + ": " + e.getMessage());
-                }
-
-                // Post-confirmation actions
-                try {
-                    Thread.sleep(1000);
-                    confirmationPage.cancelBooking();
-                    Thread.sleep(500);
-                } catch (Exception e) {
-                    logger.error("Error during post-confirmation actions: {}", e.getMessage());
-                    test.fail("Error during post-confirmation actions: " + e.getMessage());
-                }
-
-            } catch (Exception e) {
-                logger.error("An unexpected error occurred during the test: {}", e.getMessage());
-                test.fail("An unexpected error occurred: " + e.getMessage());
-            } finally {
-                // Clean up or reset if necessary
-                // driver.manage().deleteAllCookies();
-            }
-        }
-
-        // After the loop, generate the performance reports
-        try {
-            PerformanceReportAdv report = new PerformanceReportAdv(sampler.getSamples());
-
-            // Set the test start time in the report for accurate elapsed time calculation
-            report.setTestStartTime(testStartTime);
-
-            // Generate the reports
-            report.generateSummaryReport("test-output/summary_report_adv.csv");
-            report.generateAggregateReport("test-output/aggregate_report_adv.csv");
-            report.generateResponseTimesOverTimeChart("test-output/response_times_over_time_adv.png");
-
-            // Add the summary table to ExtentReports
-            test.info("Summary Report (Advanced):");
-            test.info(MarkupHelper.createTable(report.getSummaryTableData()));
-
-            // Add the aggregate table to ExtentReports
-            test.info("Aggregate Report (Advanced):");
-            test.info(MarkupHelper.createTable(report.getAggregateTableData()));
-
-            // Add the response times over time chart to ExtentReports
-            if (new File("test-output/response_times_over_time_adv.png").exists()) {
-                test.addScreenCaptureFromPath("test-output/response_times_over_time_adv.png", "Response Times Over Time (Scenario 1)");
-            }
-        } catch (IOException e) {
-            logger.error("Error generating reports: {}", e.getMessage());
-            test.fail("Error generating reports: " + e.getMessage());
-        }
-    }
-
-    
-    private long estimateRequestSize(Request request) {
-        long size = 0;
-        // Estimate headers size
-        if (request.getHeaders() != null) {
-            size += request.getHeaders().toJson().toString().getBytes().length;
-        }
-        // Estimate body size if available
-        if (request.getHasPostData().isPresent() && request.getHasPostData().get()) {
-            size += request.getPostData().orElse("").getBytes().length;
-        }
-        return size;
-    }
-
-    private long getTotalBytesSent() {
-        synchronized (requestSizes) {
-            long total = requestSizes.values().stream().mapToLong(Long::longValue).sum();
-            requestSizes.clear(); // Clear after reading
-            return total;
-        }
-    }
-
-   
-    private long getTotalBytesReceived() {
-        synchronized (responseSizes) {
-            long total = responseSizes.values().stream().mapToLong(Long::longValue).sum();
-            responseSizes.clear(); // Clear after reading
-            return total;
-        }
-    }
-}
-*/
-
-
 package tests;
 
-import com.aventstack.extentreports.markuputils.MarkupHelper;
 import org.openqa.selenium.By;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
-import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.devtools.DevTools;
-import org.openqa.selenium.devtools.v113.network.Network;
-import org.openqa.selenium.devtools.v113.network.model.Request;
-import org.openqa.selenium.devtools.v113.network.model.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
@@ -345,25 +11,20 @@ import org.testng.annotations.Test;
 import pages.*;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.ArrayList;
+import java.util.List;
 import org.apache.commons.io.FileUtils;
 
 public class Scenario1TestSampAdv extends BaseTest {
 
     private static final Logger logger = LoggerFactory.getLogger(Scenario1TestSampAdv.class);
 
-    // Instantiate the PerformanceSamplerAdv
-    private PerformanceSamplerAdv sampler = new PerformanceSamplerAdv();
+    // List to store performance data
+    private List<PerformanceData> performanceDataList = new ArrayList<>();
 
-    // DevTools and network data collections
-    private DevTools devTools;
-    private Map<String, Long> requestSizes = new HashMap<>();
-    private Map<String, Long> responseSizes = new HashMap<>();
     private final By usernameField = By.id("inputLoginUserName");
-
 
     @Parameters({"duration"})
     @Test
@@ -371,42 +32,15 @@ public class Scenario1TestSampAdv extends BaseTest {
         test = extent.createTest("Scenario1TestAdv");
         long testStartTime = System.currentTimeMillis();
         long endTime = testStartTime + duration * 1000; // Convert duration to milliseconds
-            System.out.println("Start Time :"+testStartTime);
-            System.out.println("End Time :"+endTime);
-            System.out.println("Duration is : "+duration);
-
-
-        // Initialize DevTools for network monitoring
-        devTools = ((ChromeDriver) driver).getDevTools();
-        devTools.createSession();
-
-        // Enable Network tracking
-        devTools.send(Network.enable(Optional.empty(), Optional.empty(), Optional.empty()));
-
-        // Set up listeners to capture request and response sizes
-        devTools.addListener(Network.requestWillBeSent(), requestSent -> {
-            String requestId = requestSent.getRequestId().toString();
-            Request request = requestSent.getRequest();
-            long requestSize = estimateRequestSize(request);
-            synchronized (requestSizes) {
-                requestSizes.put(requestId, requestSize);
-            }
-        });
-
-        devTools.addListener(Network.responseReceived(), responseReceived -> {
-            String requestId = responseReceived.getRequestId().toString();
-            Response response = responseReceived.getResponse();
-            long responseSize = (long) response.getEncodedDataLength();
-            synchronized (responseSizes) {
-                responseSizes.put(requestId, responseSize);
-            }
-        });
+        System.out.println("Start Time :" + testStartTime);
+        System.out.println("End Time :" + endTime);
+        System.out.println("Duration is : " + duration);
 
         String currentAction = "";
 
         while (System.currentTimeMillis() < endTime) {
             try {
-                System.out.println("Time Now is: "+System.currentTimeMillis());
+                System.out.println("Time Now is: " + System.currentTimeMillis());
                 // Load test data
                 String baseUrl = testData.getProperty("URL");
                 String username = config.getProperty("username");
@@ -424,98 +58,116 @@ public class Scenario1TestSampAdv extends BaseTest {
 
                 // Step 0: Login Page Loading
                 currentAction = "LoginPage";
-                sampler.sampleStart(currentAction);
+                long actionStartTime = System.currentTimeMillis();
+                boolean success = true;
+                String errorMessage = null;
                 try {
-                    
                     loginPage.goToApp(baseUrl);
-                    // Fetch data sizes
-                    long bytesSent = getTotalBytesSent();
-                    long bytesReceived = getTotalBytesReceived();
-                    sampler.sampleEnd(currentAction, true, bytesSent, bytesReceived);
                     logger.info("Navigated to {}", baseUrl);
                     test.info("Navigated to " + baseUrl);
                 } catch (Exception e) {
+                    success = false;
+                    errorMessage = e.getMessage();
                     handleError(currentAction, e);
                 }
+                long responseTime = System.currentTimeMillis() - actionStartTime;
+                performanceDataList.add(new PerformanceData(currentAction, responseTime, success, errorMessage, actionStartTime));
 
                 // Step 1: Authorization
                 currentAction = "Authorization";
                 loginPage.loginCred(username, password);
-                sampler.sampleStart(currentAction);
+                actionStartTime = System.currentTimeMillis();
+                success = true;
+                errorMessage = null;
                 try {
                     loginPage.login();
-                    long bytesSent = getTotalBytesSent();
-                    long bytesReceived = getTotalBytesReceived();
-                    sampler.sampleEnd(currentAction, true, bytesSent, bytesReceived);
                 } catch (Exception e) {
+                    success = false;
+                    errorMessage = e.getMessage();
                     handleError(currentAction, e);
                 }
+                responseTime = System.currentTimeMillis() - actionStartTime;
+                performanceDataList.add(new PerformanceData(currentAction, responseTime, success, errorMessage, actionStartTime));
 
                 // Step 2: Fill Client Data
                 currentAction = "Fill Client Data";
                 customerSearchPage.searchCustomerByNameData("SANTIER", "JEAN-MARC", "50350");
-
-                sampler.sampleStart(currentAction);
+                actionStartTime = System.currentTimeMillis();
+                success = true;
+                errorMessage = null;
                 try {
                     customerSearchPage.selectCustomer();
-                    long bytesSent = getTotalBytesSent();
-                    long bytesReceived = getTotalBytesReceived();
-                    sampler.sampleEnd(currentAction, true, bytesSent, bytesReceived);
                 } catch (Exception e) {
+                    success = false;
+                    errorMessage = e.getMessage();
                     handleError(currentAction, e);
                 }
+                responseTime = System.currentTimeMillis() - actionStartTime;
+                performanceDataList.add(new PerformanceData(currentAction, responseTime, success, errorMessage, actionStartTime));
 
                 // Step 3: Client Found
                 currentAction = "Client Found";
-                sampler.sampleStart(currentAction);
+                actionStartTime = System.currentTimeMillis();
+                success = true;
+                errorMessage = null;
                 try {
                     customerSearchPage.goToAvailability();
-                    long bytesSent = getTotalBytesSent();
-                    long bytesReceived = getTotalBytesReceived();
-                    sampler.sampleEnd(currentAction, true, bytesSent, bytesReceived);
                 } catch (Exception e) {
+                    success = false;
+                    errorMessage = e.getMessage();
                     handleError(currentAction, e);
                 }
+                responseTime = System.currentTimeMillis() - actionStartTime;
+                performanceDataList.add(new PerformanceData(currentAction, responseTime, success, errorMessage, actionStartTime));
 
                 // Step 4: Search Availability
                 currentAction = "Search Availability";
                 availabilityPage.enterStartDate(dateDebut);
                 availabilityPage.selectSite(site);
-                sampler.sampleStart(currentAction);
+                actionStartTime = System.currentTimeMillis();
+                success = true;
+                errorMessage = null;
                 try {
                     availabilityPage.searchAvailability();
-                    long bytesSent = getTotalBytesSent();
-                    long bytesReceived = getTotalBytesReceived();
-                    sampler.sampleEnd(currentAction, true, bytesSent, bytesReceived);
                 } catch (Exception e) {
+                    success = false;
+                    errorMessage = e.getMessage();
                     handleError(currentAction, e);
                 }
+                responseTime = System.currentTimeMillis() - actionStartTime;
+                performanceDataList.add(new PerformanceData(currentAction, responseTime, success, errorMessage, actionStartTime));
 
                 // Step 5: Go To Reservation Detail
                 currentAction = "GoToReservationDetail";
-                sampler.sampleStart(currentAction);
+                actionStartTime = System.currentTimeMillis();
+                success = true;
+                errorMessage = null;
                 try {
                     availabilityPage.selectDestination();
-                    long bytesSent = getTotalBytesSent();
-                    long bytesReceived = getTotalBytesReceived();
-                    sampler.sampleEnd(currentAction, true, bytesSent, bytesReceived);
                 } catch (Exception e) {
+                    success = false;
+                    errorMessage = e.getMessage();
                     handleError(currentAction, e);
                 }
+                responseTime = System.currentTimeMillis() - actionStartTime;
+                performanceDataList.add(new PerformanceData(currentAction, responseTime, success, errorMessage, actionStartTime));
 
                 // Step 6: Fill Reservation Data
                 currentAction = "Fill Reservation Data";
-                sampler.sampleStart(currentAction);
+                actionStartTime = System.currentTimeMillis();
+                success = true;
+                errorMessage = null;
                 try {
                     reservationPage.fillReservationDetails(commentaire);
-                    long bytesSent = getTotalBytesSent();
-                    long bytesReceived = getTotalBytesReceived();
-                    sampler.sampleEnd(currentAction, true, bytesSent, bytesReceived);
                 } catch (Exception e) {
+                    success = false;
+                    errorMessage = e.getMessage();
                     handleError(currentAction, e);
                 }
+                responseTime = System.currentTimeMillis() - actionStartTime;
+                performanceDataList.add(new PerformanceData(currentAction, responseTime, success, errorMessage, actionStartTime));
 
-                // Get Booking Number (not sampled)
+                // Get Booking Number (not measured as an action)
                 try {
                     Thread.sleep(3000);
                     String bookingNumber = reservationPage.getBookingNumber();
@@ -534,15 +186,18 @@ public class Scenario1TestSampAdv extends BaseTest {
 
                 // Step 7: Confirmation
                 currentAction = "Confirmation";
-                sampler.sampleStart(currentAction);
+                actionStartTime = System.currentTimeMillis();
+                success = true;
+                errorMessage = null;
                 try {
                     reservationPage.confirmBooking();
-                    long bytesSent = getTotalBytesSent();
-                    long bytesReceived = getTotalBytesReceived();
-                    sampler.sampleEnd(currentAction, true, bytesSent, bytesReceived);
                 } catch (Exception e) {
+                    success = false;
+                    errorMessage = e.getMessage();
                     handleError(currentAction, e);
                 }
+                responseTime = System.currentTimeMillis() - actionStartTime;
+                performanceDataList.add(new PerformanceData(currentAction, responseTime, success, errorMessage, actionStartTime));
 
                 // Post-confirmation actions
                 try {
@@ -560,75 +215,39 @@ public class Scenario1TestSampAdv extends BaseTest {
 
         // After the loop, generate the performance reports
         try {
-            PerformanceReportAdv report = new PerformanceReportAdv(sampler.getSamples());
-
-            // Set the test start time in the report for accurate elapsed time calculation
-            report.setTestStartTime(testStartTime);
-
-            // Generate the reports
-            report.generateSummaryReport("test-output/summary_report_adv.csv");
-            report.generateAggregateReport("test-output/aggregate_report_adv.csv");
-            report.generateResponseTimesOverTimeChart("test-output/response_times_over_time_adv.png");
-
-            // Add the summary table to ExtentReports
-            test.info("Summary Report (Advanced):");
-            test.info(MarkupHelper.createTable(report.getSummaryTableData()));
-
-            // Add the aggregate table to ExtentReports
-            test.info("Aggregate Report (Advanced):");
-            test.info(MarkupHelper.createTable(report.getAggregateTableData()));
-
-            // Add the response times over time chart to ExtentReports
-            if (new File("test-output/response_times_over_time_adv.png").exists()) {
-                test.addScreenCaptureFromPath("test-output/response_times_over_time_adv.png", "Response Times Over Time (Scenario 1)");
-            }
-        } catch (IOException e) {
+            generatePerformanceReport();
+        } catch (Exception e) {
             handleError("Generating Reports", e);
         }
     }
 
     /**
-     * Helper method to estimate the size of the request.
-     *
-     * @param request The request object.
-     * @return The estimated size of the request in bytes.
+     * Helper method to generate performance report.
      */
-    private long estimateRequestSize(Request request) {
-        long size = 0;
-        // Estimate headers size
-        if (request.getHeaders() != null) {
-            size += request.getHeaders().toJson().toString().getBytes().length;
-        }
-        // Estimate body size if available
-        if (request.getHasPostData().isPresent() && request.getHasPostData().get()) {
-            size += request.getPostData().orElse("").getBytes().length;
-        }
-        return size;
-    }
+    private void generatePerformanceReport() {
+        // You can implement the logic to generate the report using performanceDataList
+        // For example, write to CSV, generate charts, etc.
+        // Here's a simple example of writing to a CSV file
 
-    /**
-     * Calculates the total bytes sent since the last read and resets the counter.
-     *
-     * @return The total bytes sent.
-     */
-    private long getTotalBytesSent() {
-        synchronized (requestSizes) {
-            long total = requestSizes.values().stream().mapToLong(Long::longValue).sum();
-            requestSizes.clear(); // Clear after reading
-            return total;
-        }
-    }
+        String csvFile = "test-output/performance_data.csv";
+        try (FileWriter writer = new FileWriter(csvFile)) {
+            // Write header
+            writer.append("Action Name,Response Time (ms),Success,Error Message,Timestamp\n");
+            for (PerformanceData data : performanceDataList) {
+                writer.append(data.getActionName()).append(",");
+                writer.append(String.valueOf(data.getResponseTime())).append(",");
+                writer.append(String.valueOf(data.isSuccess())).append(",");
+                writer.append(data.getErrorMessage() != null ? data.getErrorMessage().replace(",", ";") : "").append(",");
+                writer.append(String.valueOf(data.getTimestamp())).append("\n");
+            }
+            writer.flush();
+            logger.info("Performance data written to {}", csvFile);
+            test.info("Performance data written to " + csvFile);
 
-    /**
-     * Calculates the total bytes received since the last read and resets the counter.
-     *
-     * @return The total bytes received.
-     */
-    private long getTotalBytesReceived() {
-        synchronized (responseSizes) {
-            long total = responseSizes.values().stream().mapToLong(Long::longValue).sum();
-            responseSizes.clear(); // Clear after reading
-            return total;
+            // You can also integrate the data into ExtentReports or generate charts as needed
+        } catch (IOException e) {
+            logger.error("Error writing performance data: {}", e.getMessage());
+            test.fail("Error writing performance data: " + e.getMessage());
         }
     }
 
@@ -658,9 +277,6 @@ public class Scenario1TestSampAdv extends BaseTest {
      * @param e             The exception that occurred.
      */
     private void handleError(String currentAction, Exception e) {
-        long bytesSent = getTotalBytesSent();
-        long bytesReceived = getTotalBytesReceived();
-        sampler.sampleEnd(currentAction, false, bytesSent, bytesReceived);
         logger.error("Error during {}: {}", currentAction, e.getMessage());
         test.fail("Error during " + currentAction + ": " + e.getMessage());
 
