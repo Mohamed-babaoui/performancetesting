@@ -26,7 +26,7 @@ test-init:
     - testing
   script:
     - echo "Running TestNG tests"
-    - mvn test -Dduration=500  # Adjust the duration parameter as needed
+    - mvn test -Dduration=1000  # Adjust the duration parameter as needed
   artifacts:
     paths:
       - test-output/  # Save test results
