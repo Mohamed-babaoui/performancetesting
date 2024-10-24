@@ -66,7 +66,6 @@ public abstract class BaseTest {
    @BeforeMethod
 public void setUp() throws IOException {
     WebDriverManager.chromedriver().setup();
-    
     ChromeOptions options = new ChromeOptions();
     options.addArguments("--no-sandbox");  // Required in Docker/CI environments
     options.addArguments("--disable-dev-shm-usage");  // Prevent shared memory issues in Docker

@@ -3,7 +3,7 @@
     <test name="Scenario1">
         <parameter name="duration" value="${duration}" /> <!-- Use Maven property for dynamic duration -->
         <classes>
-            <class name="tests.Scenario1TestSampAdv"/>
+            <class name="tests.Scenario1Test"/>
         </classes>
     </test>
     <!-- Uncomment the following section if you want to enable Scenario2 with dynamic duration as well -->
