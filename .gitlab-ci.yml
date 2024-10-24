@@ -1,33 +1,29 @@
-# Define the stages for the pipeline
+default:
+  image: maven:3.8.5-openjdk-17
+  tags:
+    - azure
+    - docker
+    - testing
+
+cache:
+  paths:
+    - .m2/repository/
+  key: maven-$CI_COMMIT_REF_SLUG
+
 stages:
   - build
   - test
 
-# Build job: Compiles the Maven project
 build-job:
   stage: build
-  image: nexus.pvcp.intra:8445/pvcp/testing/chromeimage:1.0.0  # Custom Docker image with Chrome, Maven, and Java 17
-  tags: 
-    - azure
-    - docker
-    - testing
   script:
     - mvn clean compile
-  # Uncomment the line below if you want to manually trigger the build step
-  # when: manual
 
-# Test job: Runs TestNG tests and saves test results
-test-init:
+test-job:
   stage: test
-  image: nexus.pvcp.intra:8445/pvcp/testing/chromeimage:1.0.0  # Custom Docker image with Chrome, Maven, and Java 17
-  tags: 
-    - azure
-    - docker
-    - testing
   script:
     - echo "Running TestNG tests"
-    - mvn test -Dduration=1000  # Adjust the duration parameter as needed
+    - mvn test -Dduration=500
   artifacts:
     paths:
-      - test-output/  # Save test results
-    expire_in: 1 week  # Optional: specify how long to keep artifacts (default is forever)
+      - test-output/
