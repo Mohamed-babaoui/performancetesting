@@ -13,12 +13,8 @@ import org.jfree.data.xy.XYSeriesCollection;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.text.FieldPosition;
-import java.text.NumberFormat;
-import java.text.ParsePosition;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.text.*;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -56,10 +52,7 @@ public class PerformanceReportAdv {
                 "Max (ms)",
                 "Std. Dev.",
                 "Error %",
-                "Throughput (samples/sec)",
-                "Received KB/sec",
-                "Sent KB/sec",
-                "Avg. Bytes"
+                "Throughput (samples/sec)"
         };
         rows.add(header);
 
@@ -87,15 +80,6 @@ public class PerformanceReportAdv {
             double totalTestTimeSec = (lastSampleTime - firstSampleTime) / 1000.0;
             double throughput = totalTestTimeSec > 0 ? totalSamples / totalTestTimeSec : 0;
 
-            // Calculate Received and Sent KB/sec
-            long totalBytesReceived = results.stream().mapToLong(PerformanceSamplerAdv.SampleResult::getBytesReceived).sum();
-            long totalBytesSent = results.stream().mapToLong(PerformanceSamplerAdv.SampleResult::getBytesSent).sum();
-            double receivedKBPerSec = totalTestTimeSec > 0 ? (totalBytesReceived / 1024.0) / totalTestTimeSec : 0;
-            double sentKBPerSec = totalTestTimeSec > 0 ? (totalBytesSent / 1024.0) / totalTestTimeSec : 0;
-
-            // Calculate Avg. Bytes
-            double avgBytes = totalSamples > 0 ? totalBytesReceived / (double) totalSamples : 0;
-
             String[] row = {
                     label,
                     String.valueOf(totalSamples),
@@ -104,10 +88,7 @@ public class PerformanceReportAdv {
                     String.valueOf(max),
                     String.format("%.2f", stdDev),
                     String.format("%.2f%%", errorPercentage),
-                    String.format("%.2f", throughput),
-                    String.format("%.2f", receivedKBPerSec),
-                    String.format("%.2f", sentKBPerSec),
-                    String.format("%.2f", avgBytes)
+                    String.format("%.2f", throughput)
             };
             rows.add(row);
         }
@@ -135,10 +116,7 @@ public class PerformanceReportAdv {
                 "Max (ms)",
                 "Std. Dev.",
                 "Error %",
-                "Throughput (samples/sec)",
-                "Received KB/sec",
-                "Sent KB/sec",
-                "Avg. Bytes"
+                "Throughput (samples/sec)"
         };
         rows.add(header);
 
@@ -166,15 +144,6 @@ public class PerformanceReportAdv {
             double totalTestTimeSec = (lastSampleTime - firstSampleTime) / 1000.0;
             double throughput = totalTestTimeSec > 0 ? totalSamples / totalTestTimeSec : 0;
 
-            // Calculate Received and Sent KB/sec
-            long totalBytesReceived = results.stream().mapToLong(PerformanceSamplerAdv.SampleResult::getBytesReceived).sum();
-            long totalBytesSent = results.stream().mapToLong(PerformanceSamplerAdv.SampleResult::getBytesSent).sum();
-            double receivedKBPerSec = totalTestTimeSec > 0 ? (totalBytesReceived / 1024.0) / totalTestTimeSec : 0;
-            double sentKBPerSec = totalTestTimeSec > 0 ? (totalBytesSent / 1024.0) / totalTestTimeSec : 0;
-
-            // Calculate Avg. Bytes
-            double avgBytes = totalSamples > 0 ? totalBytesReceived / (double) totalSamples : 0;
-
             String[] row = {
                     label,
                     String.valueOf(totalSamples),
@@ -183,10 +152,7 @@ public class PerformanceReportAdv {
                     String.valueOf(max),
                     String.format("%.2f", stdDev),
                     String.format("%.2f%%", errorPercentage),
-                    String.format("%.2f", throughput),
-                    String.format("%.2f", receivedKBPerSec),
-                    String.format("%.2f", sentKBPerSec),
-                    String.format("%.2f", avgBytes)
+                    String.format("%.2f", throughput)
             };
             rows.add(row);
         }
@@ -213,10 +179,7 @@ public class PerformanceReportAdv {
                 "Throughput (samples/sec)",
                 "90% Line (ms)",
                 "95% Line (ms)",
-                "99% Line (ms)",
-                "Received KB/sec",
-                "Sent KB/sec",
-                "Avg. Bytes"
+                "99% Line (ms)"
         };
         rows.add(header);
 
@@ -250,15 +213,6 @@ public class PerformanceReportAdv {
             double totalTestTimeSec = (lastSampleTime - firstSampleTime) / 1000.0;
             double throughput = totalTestTimeSec > 0 ? totalSamples / totalTestTimeSec : 0;
 
-            // Calculate Received and Sent KB/sec
-            long totalBytesReceived = results.stream().mapToLong(PerformanceSamplerAdv.SampleResult::getBytesReceived).sum();
-            long totalBytesSent = results.stream().mapToLong(PerformanceSamplerAdv.SampleResult::getBytesSent).sum();
-            double receivedKBPerSec = totalTestTimeSec > 0 ? (totalBytesReceived / 1024.0) / totalTestTimeSec : 0;
-            double sentKBPerSec = totalTestTimeSec > 0 ? (totalBytesSent / 1024.0) / totalTestTimeSec : 0;
-
-            // Calculate Avg. Bytes
-            double avgBytes = totalSamples > 0 ? totalBytesReceived / (double) totalSamples : 0;
-
             String[] row = {
                     label,
                     String.valueOf(totalSamples),
@@ -270,10 +224,7 @@ public class PerformanceReportAdv {
                     String.format("%.2f", throughput),
                     String.valueOf(pct90),
                     String.valueOf(pct95),
-                    String.valueOf(pct99),
-                    String.format("%.2f", receivedKBPerSec),
-                    String.format("%.2f", sentKBPerSec),
-                    String.format("%.2f", avgBytes)
+                    String.valueOf(pct99)
             };
             rows.add(row);
         }
@@ -304,10 +255,7 @@ public class PerformanceReportAdv {
                 "Throughput (samples/sec)",
                 "90% Line (ms)",
                 "95% Line (ms)",
-                "99% Line (ms)",
-                "Received KB/sec",
-                "Sent KB/sec",
-                "Avg. Bytes"
+                "99% Line (ms)"
         };
         rows.add(header);
 
@@ -341,15 +289,6 @@ public class PerformanceReportAdv {
             double totalTestTimeSec = (lastSampleTime - firstSampleTime) / 1000.0;
             double throughput = totalTestTimeSec > 0 ? totalSamples / totalTestTimeSec : 0;
 
-            // Calculate Received and Sent KB/sec
-            long totalBytesReceived = results.stream().mapToLong(PerformanceSamplerAdv.SampleResult::getBytesReceived).sum();
-            long totalBytesSent = results.stream().mapToLong(PerformanceSamplerAdv.SampleResult::getBytesSent).sum();
-            double receivedKBPerSec = totalTestTimeSec > 0 ? (totalBytesReceived / 1024.0) / totalTestTimeSec : 0;
-            double sentKBPerSec = totalTestTimeSec > 0 ? (totalBytesSent / 1024.0) / totalTestTimeSec : 0;
-
-            // Calculate Avg. Bytes
-            double avgBytes = totalSamples > 0 ? totalBytesReceived / (double) totalSamples : 0;
-
             String[] row = {
                     label,
                     String.valueOf(totalSamples),
@@ -361,10 +300,7 @@ public class PerformanceReportAdv {
                     String.format("%.2f", throughput),
                     String.valueOf(pct90),
                     String.valueOf(pct95),
-                    String.valueOf(pct99),
-                    String.format("%.2f", receivedKBPerSec),
-                    String.format("%.2f", sentKBPerSec),
-                    String.format("%.2f", avgBytes)
+                    String.valueOf(pct99)
             };
             rows.add(row);
         }
@@ -461,7 +397,7 @@ public class PerformanceReportAdv {
             }
         });
 
-        // **Add this code to display data points**
+        // Display data points
         XYPlot plot = chart.getXYPlot();
         XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer();
         renderer.setDefaultShapesVisible(true);

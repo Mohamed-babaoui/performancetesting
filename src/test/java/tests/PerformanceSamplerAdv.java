@@ -1,9 +1,9 @@
 package tests;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.ArrayList;
 
 public class PerformanceSamplerAdv {
 
@@ -26,10 +26,8 @@ public class PerformanceSamplerAdv {
      *
      * @param sampleName     The name of the sample.
      * @param success        Whether the sample was successful.
-     * @param bytesSent      The number of bytes sent during the sample.
-     * @param bytesReceived  The number of bytes received during the sample.
      */
-    public void sampleEnd(String sampleName, boolean success, long bytesSent, long bytesReceived) {
+    public void sampleEnd(String sampleName, boolean success) {
         Sample sample = currentSample.get();
         if (sample != null && sample.getSampleName().equals(sampleName)) {
             sample.setEndTime(System.currentTimeMillis());
@@ -41,9 +39,6 @@ public class PerformanceSamplerAdv {
                     sample.getEndTime() - sample.getStartTime(),
                     success
             );
-
-            result.setBytesSent(bytesSent);
-            result.setBytesReceived(bytesReceived);
 
             samples.computeIfAbsent(sampleName, k -> new ArrayList<>()).add(result);
             currentSample.remove();
@@ -106,19 +101,15 @@ public class PerformanceSamplerAdv {
         private long endTime;
         private long duration;
         private boolean success;
-        private long bytesReceived; // In bytes
-        private long bytesSent;     // In bytes
 
         public SampleResult(long startTime, long endTime, long duration, boolean success) {
             this.startTime = startTime;
             this.endTime = endTime;
             this.duration = duration;
             this.success = success;
-            this.bytesReceived = 0; // Default value
-            this.bytesSent = 0;     // Default value
         }
 
-        // Getters and setters
+        // Getters
         public long getStartTime() {
             return startTime;
         }
@@ -133,22 +124,6 @@ public class PerformanceSamplerAdv {
 
         public boolean isSuccess() {
             return success;
-        }
-
-        public long getBytesReceived() {
-            return bytesReceived;
-        }
-
-        public void setBytesReceived(long bytesReceived) {
-            this.bytesReceived = bytesReceived;
-        }
-
-        public long getBytesSent() {
-            return bytesSent;
-        }
-
-        public void setBytesSent(long bytesSent) {
-            this.bytesSent = bytesSent;
         }
     }
 }
