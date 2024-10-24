@@ -65,17 +65,9 @@ public abstract class BaseTest {
 
    @BeforeMethod
 public void setUp() throws IOException {
-    WebDriverManager.chromedriver().setup();
-    ChromeOptions options = new ChromeOptions();
-    options.addArguments("--no-sandbox");  // Required in Docker/CI environments
-    options.addArguments("--disable-dev-shm-usage");  // Prevent shared memory issues in Docker
-    options.addArguments("--disable-gpu");  // Disable GPU in headless mode
-    options.addArguments("--headless");  // Enable headless mode for CI
-    options.addArguments("--remote-allow-origins=*");  // Avoid origin issues with newer Chrome versions
-    options.setAcceptInsecureCerts(true);  // Accept insecure certificates if necessary
-
+ 
     // Initialize ChromeDriver
-    driver = new ChromeDriver(options);
+    driver =  setUpRemoteChromeDriver()
 
     // Initialize WebDriverWait
     wait = new WebDriverWait(driver, java.time.Duration.ofSeconds(100));
@@ -89,4 +81,22 @@ public void setUp() throws IOException {
             driver.quit();
         }
     }
+private WebDriver setUpRemoteChromeDriver() throws IOException { 
+    ChromeOptions options = new ChromeOptions();
+    options.addArguments("--disable-notifications");  
+    options.addArguments("--disable-dev-shm-usage");  
+    options.addArguments("--no-sandbox");      
+    options.addArguments("--ignore-certificate-errors");    
+    options.addArguments("--disable-extensions");  
+    options.addArguments("--incognito");
+    options.addArguments("--disable-search-engine-choice-screen");
+    options.setAcceptInsecureCerts(true); // Updated for Selenium 4.22  
+    // Set SSL properties   
+    System.setProperty("javax.net.ssl.trustStore", "src" + File.separator + "pvcp-intermidate.jks");    
+    System.setProperty("javax.net.ssl.trustStorePassword", "97460480");    
+    props.load(Browser.class.getClassLoader().getResourceAsStream("seleniumHub.properties"));    
+    URL remoteUrl = new URL(props.getProperty("URL_Remote"));  
+    return new RemoteWebDriver(remoteUrl, options);   
+}
+    
 }
