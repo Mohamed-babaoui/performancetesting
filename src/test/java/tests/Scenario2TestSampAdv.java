@@ -1,22 +1,21 @@
 package tests;
 
-import com.aventstack.extentreports.ExtentTest;
 import com.aventstack.extentreports.markuputils.MarkupHelper;
 import org.openqa.selenium.By;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
+// Removed DevTools imports
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 import pages.*;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import org.apache.commons.io.FileUtils;
 
 /**
@@ -26,8 +25,9 @@ public class Scenario2TestSampAdv extends BaseTest {
 
     private static final Logger logger = LoggerFactory.getLogger(Scenario2TestSampAdv.class);
 
-    // List to store performance data
-    private List<PerformanceData> performanceDataList = new ArrayList<>();
+    // Instantiate the PerformanceSamplerAdv
+    private PerformanceSamplerAdv sampler = new PerformanceSamplerAdv();
+
 
     private final By usernameField = By.id("inputLoginUserName");
 
@@ -37,11 +37,15 @@ public class Scenario2TestSampAdv extends BaseTest {
         test = extent.createTest("Scenario2TestAdv");
         long testStartTime = System.currentTimeMillis();
         long endTime = testStartTime + duration * 1000; // Convert duration to milliseconds
-
+        System.out.println("Start Time :" + testStartTime);
+        System.out.println("End Time :" + endTime);
+        System.out.println("Duration is : " + duration);
         String currentAction = "";
 
         while (System.currentTimeMillis() < endTime) {
             try {
+                printCurrentTime();
+
                 // Load data
                 String baseUrl = testData.getProperty("URL");
                 String username = config.getProperty("username");
@@ -60,134 +64,99 @@ public class Scenario2TestSampAdv extends BaseTest {
 
                 // Step 0: Login Page Loading
                 currentAction = "LoginPage";
-                ExtentTest actionNode = test.createNode(currentAction);
-                long actionStartTime = System.currentTimeMillis();
-                boolean success = true;
-                String errorMessage = null;
+                sampler.sampleStart(currentAction);
                 try {
                     loginPage.goToApp(baseUrl);
+                    sampler.sampleEnd(currentAction, true);
                     logger.info("Navigated to {}", baseUrl);
-                    actionNode.pass("Navigated to " + baseUrl);
+                    test.info("Navigated to " + baseUrl);
                 } catch (Exception e) {
-                    success = false;
-                    errorMessage = e.getMessage();
-                    handleError(currentAction, e, actionNode);
+                    sampler.sampleEnd(currentAction, false);
+                    handleError(currentAction, e);
                 }
-                long responseTime = System.currentTimeMillis() - actionStartTime;
-                performanceDataList.add(new PerformanceData(currentAction, responseTime, success, errorMessage, actionStartTime));
 
                 // Step 1: Authorization
                 currentAction = "Authorization";
-                actionNode = test.createNode(currentAction);
                 loginPage.loginCred(username, password);
-                actionStartTime = System.currentTimeMillis();
-                success = true;
-                errorMessage = null;
+                sampler.sampleStart(currentAction);
                 try {
                     loginPage.login();
-                    actionNode.pass("Authorization successful.");
+                    sampler.sampleEnd(currentAction, true);
+                    test.pass("Authorization successful.");
                 } catch (Exception e) {
-                    success = false;
-                    errorMessage = e.getMessage();
-                    handleError(currentAction, e, actionNode);
+                    sampler.sampleEnd(currentAction, false);
+                    handleError(currentAction, e);
                 }
-                responseTime = System.currentTimeMillis() - actionStartTime;
-                performanceDataList.add(new PerformanceData(currentAction, responseTime, success, errorMessage, actionStartTime));
 
                 // Step 2: Search Customer by Email
                 currentAction = "Fill Client Data";
-                actionNode = test.createNode(currentAction);
                 customerSearchPage.searchCustomerByEmail("cjmsantier@orange.fr");
-                actionStartTime = System.currentTimeMillis();
-                success = true;
-                errorMessage = null;
+                sampler.sampleStart(currentAction);
                 try {
                     customerSearchPage.selectCustomer();
-                    actionNode.pass("Client data filled and customer selected.");
+                    sampler.sampleEnd(currentAction, true);
+                    test.pass("Client data filled and customer selected.");
                 } catch (Exception e) {
-                    success = false;
-                    errorMessage = e.getMessage();
-                    handleError(currentAction, e, actionNode);
+                    sampler.sampleEnd(currentAction, false);
+                    handleError(currentAction, e);
                 }
-                responseTime = System.currentTimeMillis() - actionStartTime;
-                performanceDataList.add(new PerformanceData(currentAction, responseTime, success, errorMessage, actionStartTime));
 
                 // Step 3: Go to Availability page
                 currentAction = "Client Found";
-                actionNode = test.createNode(currentAction);
-                actionStartTime = System.currentTimeMillis();
-                success = true;
-                errorMessage = null;
+                sampler.sampleStart(currentAction);
                 try {
                     customerSearchPage.goToAvailability();
-                    actionNode.pass("Navigated to Availability page.");
+                    sampler.sampleEnd(currentAction, true);
+                    test.pass("Navigated to Availability page.");
                 } catch (Exception e) {
-                    success = false;
-                    errorMessage = e.getMessage();
-                    handleError(currentAction, e, actionNode);
+                    sampler.sampleEnd(currentAction, false);
+                    handleError(currentAction, e);
                 }
-                responseTime = System.currentTimeMillis() - actionStartTime;
-                performanceDataList.add(new PerformanceData(currentAction, responseTime, success, errorMessage, actionStartTime));
 
                 // Step 4: Check Availability with End Date
                 currentAction = "Search Availability";
-                actionNode = test.createNode(currentAction);
                 availabilityPage.enterStartAndEndDate(dateDebut, dateFin);
                 availabilityPage.selectSite(site);
-                actionStartTime = System.currentTimeMillis();
-                success = true;
-                errorMessage = null;
+                sampler.sampleStart(currentAction);
                 try {
                     availabilityPage.searchAvailability();
-                    actionNode.pass("Availability search performed.");
+                    sampler.sampleEnd(currentAction, true);
+                    test.pass("Availability search performed.");
                 } catch (Exception e) {
-                    success = false;
-                    errorMessage = e.getMessage();
-                    handleError(currentAction, e, actionNode);
+                    sampler.sampleEnd(currentAction, false);
+                    handleError(currentAction, e);
                 }
-                responseTime = System.currentTimeMillis() - actionStartTime;
-                performanceDataList.add(new PerformanceData(currentAction, responseTime, success, errorMessage, actionStartTime));
 
                 // Step 5: Go to Reservation Details
                 currentAction = "GoToReservationDetail";
-                actionNode = test.createNode(currentAction);
-                actionStartTime = System.currentTimeMillis();
-                success = true;
-                errorMessage = null;
+                sampler.sampleStart(currentAction);
                 try {
                     availabilityPage.selectDestination();
-                    actionNode.pass("Navigated to Reservation Details.");
+                    sampler.sampleEnd(currentAction, true);
+                    test.pass("Navigated to Reservation Details.");
                 } catch (Exception e) {
-                    success = false;
-                    errorMessage = e.getMessage();
-                    handleError(currentAction, e, actionNode);
+                    sampler.sampleEnd(currentAction, false);
+                    handleError(currentAction, e);
                 }
-                responseTime = System.currentTimeMillis() - actionStartTime;
-                performanceDataList.add(new PerformanceData(currentAction, responseTime, success, errorMessage, actionStartTime));
 
                 // Step 6: Fill Reservation Data
                 currentAction = "Fill Reservation Data";
-                actionNode = test.createNode(currentAction);
-                actionStartTime = System.currentTimeMillis();
-                success = true;
-                errorMessage = null;
+                sampler.sampleStart(currentAction);
                 try {
                     reservationPage.fillReservationDetails(commentaire);
-                    actionNode.pass("Reservation data filled.");
+                    sampler.sampleEnd(currentAction, true);
+                    test.pass("Reservation data filled.");
                 } catch (Exception e) {
-                    success = false;
-                    errorMessage = e.getMessage();
-                    handleError(currentAction, e, actionNode);
+                    sampler.sampleEnd(currentAction, false);
+                    handleError(currentAction, e);
                 }
-                responseTime = System.currentTimeMillis() - actionStartTime;
-                performanceDataList.add(new PerformanceData(currentAction, responseTime, success, errorMessage, actionStartTime));
 
                 // Get Booking Number
                 try {
-                    Thread.sleep(3000);
+                   // Thread.sleep(3000);
                     String bookingNumber = reservationPage.getBookingNumber();
                     reservationPage.clickOkOnBookingConfirmation();
-                    Thread.sleep(3000);
+                   // Thread.sleep(3000);
                     logger.info("Booking Number: {}", bookingNumber);
                     test.info("Booking Number: " + bookingNumber);
 
@@ -195,25 +164,20 @@ public class Scenario2TestSampAdv extends BaseTest {
                     Assert.assertNotNull(bookingNumber, "Booking number should not be null");
                     test.pass("Booking number is not null");
                 } catch (Exception e) {
-                    handleError("Get Booking Number", e, test);
+                    handleError("Get Booking Number", e);
                 }
 
                 // Step 7: Confirm Reservation
                 currentAction = "Confirmation";
-                actionNode = test.createNode(currentAction);
-                actionStartTime = System.currentTimeMillis();
-                success = true;
-                errorMessage = null;
+                sampler.sampleStart(currentAction);
                 try {
                     reservationPage.confirmBooking();
-                    actionNode.pass("Reservation confirmed.");
+                    sampler.sampleEnd(currentAction, true);
+                    test.pass("Reservation confirmed.");
                 } catch (Exception e) {
-                    success = false;
-                    errorMessage = e.getMessage();
-                    handleError(currentAction, e, actionNode);
+                    sampler.sampleEnd(currentAction, false);
+                    handleError(currentAction, e);
                 }
-                responseTime = System.currentTimeMillis() - actionStartTime;
-                performanceDataList.add(new PerformanceData(currentAction, responseTime, success, errorMessage, actionStartTime));
 
                 // Post-confirmation actions
                 try {
@@ -221,48 +185,40 @@ public class Scenario2TestSampAdv extends BaseTest {
                     confirmationPage.cancelBooking();
                     Thread.sleep(500);
                 } catch (Exception e) {
-                    handleError("Post-confirmation actions", e, test);
+                    handleError("Post-confirmation actions", e);
                 }
 
             } catch (Exception e) {
-                handleError("Unexpected Error", e, test);
+                handleError("Unexpected Error", e);
             }
         }
 
         // After the loop, generate the performance reports
         try {
-            generatePerformanceReport();
-        } catch (Exception e) {
-            handleError("Generating Reports", e, test);
-        }
-    }
+            PerformanceReportAdv report = new PerformanceReportAdv(sampler.getSamples());
 
-    /**
-     * Helper method to generate performance report.
-     */
-    private void generatePerformanceReport() {
-        String csvFile = "test-output/performance_data_scenario2.csv";
-        try (FileWriter writer = new FileWriter(csvFile)) {
-            // Write header
-            writer.append("Action Name,Response Time (ms),Success,Error Message,Timestamp\n");
-            for (PerformanceData data : performanceDataList) {
-                writer.append(data.getActionName()).append(",");
-                writer.append(String.valueOf(data.getResponseTime())).append(",");
-                writer.append(String.valueOf(data.isSuccess())).append(",");
-                writer.append(data.getErrorMessage() != null ? data.getErrorMessage().replace(",", ";") : "").append(",");
-                writer.append(String.valueOf(data.getTimestamp())).append("\n");
+            // Set the test start time in the report for accurate elapsed time calculation
+            report.setTestStartTime(testStartTime);
+
+            // Generate the reports
+            report.generateSummaryReport("test-output/summary_report_adv_scenario2.csv");
+            report.generateAggregateReport("test-output/aggregate_report_adv_scenario2.csv");
+            report.generateResponseTimesOverTimeChart("test-output/response_times_over_time_adv_scenario2.png");
+
+            // Add the summary table to ExtentReports
+            test.info("Summary Report (Advanced):");
+            test.info(MarkupHelper.createTable(report.getSummaryTableData()));
+
+            // Add the aggregate table to ExtentReports
+            test.info("Aggregate Report (Advanced):");
+            test.info(MarkupHelper.createTable(report.getAggregateTableData()));
+
+            // Add the response times over time chart to ExtentReports
+            if (new File("test-output/response_times_over_time_adv_scenario2.png").exists()) {
+                test.addScreenCaptureFromPath("test-output/response_times_over_time_adv_scenario2.png", "Response Times Over Time (Scenario 2)");
             }
-            writer.flush();
-            logger.info("Performance data written to {}", csvFile);
-            test.info("Performance data written to " + csvFile);
-
-            // Optionally, add the CSV file as an attachment to the report
-            test.addScreenCaptureFromPath(csvFile, "Performance Data CSV");
-
-            // If you have methods to generate charts or tables, you can include them here
         } catch (IOException e) {
-            logger.error("Error writing performance data: {}", e.getMessage());
-            test.fail("Error writing performance data: " + e.getMessage());
+            handleError("Generating Reports", e);
         }
     }
 
@@ -290,16 +246,27 @@ public class Scenario2TestSampAdv extends BaseTest {
      *
      * @param currentAction The current action being executed.
      * @param e             The exception that occurred.
-     * @param actionNode    The ExtentTest node for logging.
      */
-    private void handleError(String currentAction, Exception e, ExtentTest actionNode) {
+    private void handleError(String currentAction, Exception e) {
+        sampler.sampleEnd(currentAction, false);
         logger.error("Error during {}: {}", currentAction, e.getMessage());
-        actionNode.fail("An error occurred during " + currentAction + ": " + e.getMessage());
+        test.fail("Error during " + currentAction + ": " + e.getMessage());
 
         // Capture screenshot
         String screenshotPath = captureScreenshot(currentAction + "_failure");
         if (screenshotPath != null) {
-            actionNode.addScreenCaptureFromPath(screenshotPath);
+            test.addScreenCaptureFromPath(screenshotPath);
         }
+    }
+    private void printCurrentTime(){
+        // Get the current time
+        LocalTime currentTime = LocalTime.now();
+
+        // Format the time in HH:mm:ss format
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss");
+        String formattedTime = currentTime.format(formatter);
+
+        // Print the formatted time
+        System.out.println("Current time: " + formattedTime);
     }
 }
