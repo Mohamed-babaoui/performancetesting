@@ -67,7 +67,7 @@ public abstract class BaseTest {
 public void setUp() throws IOException {
  
     // Initialize ChromeDriver
-    driver =  setUpRemoteChromeDriver()
+    driver =  setUpRemoteChromeDriver();
 
     // Initialize WebDriverWait
     wait = new WebDriverWait(driver, java.time.Duration.ofSeconds(100));
