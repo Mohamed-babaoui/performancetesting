@@ -1,9 +1,7 @@
 package tests;
 import com.aventstack.extentreports.*;
 import com.aventstack.extentreports.reporter.ExtentSparkReporter;
-import io.github.bonigarcia.wdm.WebDriverManager;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -13,6 +11,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.time.Duration;
 import java.util.Properties;
 public abstract class BaseTest {
 
@@ -91,12 +90,23 @@ private WebDriver setUpRemoteChromeDriver() throws IOException {
     options.addArguments("--incognito");
     options.addArguments("--disable-search-engine-choice-screen");
     options.setAcceptInsecureCerts(true); // Updated for Selenium 4.22  
+
     // Set SSL properties   
     System.setProperty("javax.net.ssl.trustStore", "src" + File.separator + "pvcp-intermidate.jks");    
     System.setProperty("javax.net.ssl.trustStorePassword", "97460480");    
-    props.load(Browser.class.getClassLoader().getResourceAsStream("seleniumHub.properties"));    
+
+    // Define and load properties
+    Properties props = new Properties();
+    InputStream input = getClass().getClassLoader().getResourceAsStream("seleniumHub.properties");
+    if (input == null) {
+        throw new IOException("Property file 'seleniumHub.properties' not found in the classpath");
+    }
+    props.load(input);
+
+    // Load the URL property
     URL remoteUrl = new URL(props.getProperty("URL_Remote"));  
     return new RemoteWebDriver(remoteUrl, options);   
 }
+
     
 }
