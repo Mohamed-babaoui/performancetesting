@@ -23,7 +23,7 @@ test-job:
   stage: test
   script:
     - echo "Running TestNG tests"
-    - mvn test -Dduration=500
+    - mvn clean test -Dduration=500
   artifacts:
     paths:
       - test-output/
