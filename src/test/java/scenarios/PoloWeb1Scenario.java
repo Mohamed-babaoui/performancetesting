@@ -1,7 +1,6 @@
 package scenarios;
 
 import config.utils.BrowserManager;
-import config.utils.ExitScenarioException;
 import io.gatling.javaapi.core.ScenarioBuilder;
 import org.openqa.selenium.WebDriver;
 import pages.*;
@@ -40,8 +39,8 @@ public class PoloWeb1Scenario {
 
     public ScenarioBuilder mainScenario() {
 
-        return scenario("Polo Web - Scenario 1").
-            repeat(2)
+        return scenario("Polo Web - Scenario 1")
+            .repeat(1)
             .on(
                 pause(1) // Brief delay to ensure the user is registered as active
                 .exec(session -> {
@@ -129,7 +128,7 @@ public class PoloWeb1Scenario {
                     bookingNumber = "";
 
                     if (bookingNumber == null || bookingNumber.isEmpty() || bookingNumber.isBlank())
-                        throw new ExitScenarioException("Booking number should not be null");
+                        throw new RuntimeException("Booking number should not be null");
 
                     session = session.set("bookingNumber", bookingNumber);
                     return session;

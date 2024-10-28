@@ -9,7 +9,7 @@ import java.io.IOException;
 
 import static io.gatling.javaapi.core.CoreDsl.*;
 
-public class PoloWeb1Simulation extends Simulation{
+public class PoloWeb1Simulation extends Simulation {
     public PoloWeb1Scenario poloWeb1Scenario = new PoloWeb1Scenario();
     ScenarioBuilder scenario = poloWeb1Scenario.mainScenario();
 
