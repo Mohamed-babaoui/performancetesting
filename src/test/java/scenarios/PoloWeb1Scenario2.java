@@ -9,9 +9,10 @@ import java.io.IOException;
 import java.util.Properties;
 
 import static gatling.generic.plugin.GenericDsl.genericAction;
-import static io.gatling.javaapi.core.CoreDsl.*;
+import static io.gatling.javaapi.core.CoreDsl.pause;
+import static io.gatling.javaapi.core.CoreDsl.scenario;
 
-public class PoloWeb1Scenario {
+public class PoloWeb1Scenario2 {
 
     protected Properties config;
     protected Properties testData;
@@ -22,17 +23,19 @@ public class PoloWeb1Scenario {
     public String site = null;
     public String dateDebut = null;
     public String commentaire = null;
+    public String driver_id = BrowserManager.createWebDriver();
+    public WebDriver driver = BrowserManager.getWebDriver(driver_id);
 
-    public PoloWeb1Scenario() {
+    public PoloWeb1Scenario2() {
         config = new Properties();
         try {
-            config.load(PoloWeb1Scenario.class.getClassLoader().getResourceAsStream("config.properties"));
+            config.load(PoloWeb1Scenario2.class.getClassLoader().getResourceAsStream("config.properties"));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
         testData = new Properties();
         try {
-            testData.load(PoloWeb1Scenario.class.getClassLoader().getResourceAsStream("testdata.properties"));
+            testData.load(PoloWeb1Scenario2.class.getClassLoader().getResourceAsStream("testdata.properties"));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -53,17 +56,17 @@ public class PoloWeb1Scenario {
                 pause(1) // Brief delay to ensure the user is registered as active
                 .exec(session -> {
                     // Init driver and driver_id
-                    String driver_id = BrowserManager.createWebDriver();
-                    WebDriver driver = BrowserManager.getWebDriver(driver_id);
+                    /*String driver_id = BrowserManager.createWebDriver();
+                    WebDriver driver = BrowserManager.getWebDriver(driver_id);*/
                     // Save driver and driver_id in session
-                    session = session.set("driver_id", driver_id);
-                    session = session.set("driver", driver);
+                    session = session.set("driver_id", this.driver_id);
+                    session = session.set("driver", this.driver);
                     // Init Page Objects
-                    LoginPage loginPage = new LoginPage(driver);
-                    CustomerSearchPage customerSearchPage = new CustomerSearchPage(driver);
-                    AvailabilityPage availabilityPage = new AvailabilityPage(driver);
-                    ReservationPage reservationPage = new ReservationPage(driver);
-                    ConfirmationPage confirmationPage = new ConfirmationPage(driver);
+                    LoginPage loginPage = new LoginPage(this.driver);
+                    CustomerSearchPage customerSearchPage = new CustomerSearchPage(this.driver);
+                    AvailabilityPage availabilityPage = new AvailabilityPage(this.driver);
+                    ReservationPage reservationPage = new ReservationPage(this.driver);
+                    ConfirmationPage confirmationPage = new ConfirmationPage(this.driver);
                     // Save page objects in session
                     session = session.set("loginPage", loginPage);
                     session = session.set("customerSearchPage", customerSearchPage);
@@ -149,7 +152,6 @@ public class PoloWeb1Scenario {
                 .exec(session -> {
                     ConfirmationPage confirmationPage = (ConfirmationPage) session.get("confirmationPage");
                     confirmationPage.cancelBooking();
-                    BrowserManager.deleteWebDriver((String)session.get("driver_id"));
                     return session;
                 })
             );

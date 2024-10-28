@@ -7,9 +7,13 @@ import scenarios.PoloWSScenario;
 import static io.gatling.javaapi.core.CoreDsl.atOnceUsers;
 
 public class PoloWSSimulation extends Simulation {
-    ScenarioBuilder scenario = new PoloWSScenario().mainScenario();
+    PoloWSScenario poloWS = new PoloWSScenario();
 
     {
-        setUp(scenario.injectOpen(atOnceUsers(1)));
+        setUp(
+                poloWS.mainScenario()
+                        .injectOpen(atOnceUsers(1))
+                        .protocols(poloWS.httpProtocol))
+                .maxDuration(600);
     }
 }

@@ -1,0 +1,43 @@
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xft="http://www.exchangefortravel.org/xft/current" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <soapenv:Header>
+        <wsse:Security soapenv:mustUnderstand="1" xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd">
+            <wsse:UsernameToken wsu:Id="UsernameToken-16009048" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd">
+                <wsse:Username>svc-test-healthcheck</wsse:Username>
+                <wsse:Password Type="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-username-token-profile-1.0#PasswordText">986+PRTy</wsse:Password>
+                <wsu:Created>2014-07-08T10:26:01+02:00</wsu:Created>
+            </wsse:UsernameToken>
+        </wsse:Security>
+    </soapenv:Header>
+    <soapenv:Body>
+        <Transaction TimeStamp="2017-01-28T19:44:55+01:00" Version="1.1" xsi:schemaLocation="http://www.exchangefortravel.org/xft/current http://www.exchangefortravel.org/xft/current/xft.xsd" xsi:type="TransactionRequestType" xmlns="http://www.exchangefortravel.org/xft/current" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+            <Control>
+                <Requester Channel="Internet" Code="PV">
+                    <Country Code="FR"/>
+                    <Codes>
+                        <Code Role="Offer" Name="RatePlan"/>
+                    </Codes>
+                </Requester>
+            </Control>
+            <Action Code="Booking" Purpose="Update">
+                <Tasks>
+                    <Task Code="Segment" Purpose="Add" Ref="AddOptions"/>
+                </Tasks>
+            </Action>
+            <Style Direction="Out">
+                <Language Code="FR"/>
+            </Style>
+            <Booking>
+                <Code Role="Reference" Value="${booking_id}"/>
+                <Segment xsi:type="SegmentProductType">
+                    <Segments>
+                        <Segments What="AddOns">
+                            <Segment ID="AddOptions" Quantity="1" xsi:type="SegmentMiscellaneousType">
+                                <Code Role="Reference" Value="${Prestation}"/>
+                            </Segment>
+                        </Segments>
+                    </Segments>
+                </Segment>
+            </Booking>
+        </Transaction>
+    </soapenv:Body>
+</soapenv:Envelope>

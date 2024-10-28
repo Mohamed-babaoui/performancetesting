@@ -18,10 +18,11 @@ public class PoloWSScenario {
     private static Properties props = new Properties();
     static {
         try {
-            props.load(PoloWSScenario.class.getClassLoader().getResourceAsStream("simulation2.properties"));
+            props.load(PoloWSScenario.class.getClassLoader().getResourceAsStream("WS/simulation2.properties"));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+        System.out.println(props.getProperty("url"));
     }
 
     private String site = props.getProperty("site");
@@ -42,13 +43,13 @@ public class PoloWSScenario {
     );
 
 
-    private final HttpProtocolBuilder httpProtocol = http
+    public final HttpProtocolBuilder httpProtocol = http
             .baseUrl(url)
             .disableCaching();
 
-    private final String getQALargeBody = XMLFileReader.readXmlWithReplacePlaceholders("src/resources/xmlBodies/getQALarge.xml", placeholders);
-    private final String getQAPrecisBody = XMLFileReader.readXmlWithReplacePlaceholders("src/resources/xmlBodies/getQAPrecis.xml", placeholders);
-    private final String creteBookinBody = XMLFileReader.readXmlWithReplacePlaceholders("src/resources/xmlBodies/createBooking.xml", placeholders);
+    private final String getQALargeBody = XMLFileReader.readXmlWithReplacePlaceholders("src/test/resources/WS/xmlBodies/getQALarge.xml", placeholders);
+    private final String getQAPrecisBody = XMLFileReader.readXmlWithReplacePlaceholders("src/test/resources/WS/xmlBodies/getQAPrecis.xml", placeholders);
+    private final String createBookingBody = XMLFileReader.readXmlWithReplacePlaceholders("src/test/resources/WS/xmlBodies/createBooking.xml", placeholders);
 
 
     private ChainBuilder getQALarge = exec(http("GetQALarge")
@@ -65,7 +66,7 @@ public class PoloWSScenario {
 
     private ChainBuilder createBooking = exec(http("CreateBooking")
             .post("/")
-            .body(StringBody(creteBookinBody))
+            .body(StringBody(createBookingBody))
             .check(status().is(200))
             .check(bodyString().saveAs("responseBody"))
     );
@@ -74,7 +75,7 @@ public class PoloWSScenario {
             .post("/")
             .body(StringBody(session -> {
                 String bookingId = XMLFileReader.extractValueFromXML(session.getString("responseBody"), "//Transaction/Booking/Price/@Value");
-                return XMLFileReader.readXmlWithReplacePlaceholders("src/resources/xmlBodies/getBooking.xml", Map.of("booking_id", bookingId));
+                return XMLFileReader.readXmlWithReplacePlaceholders("src/test/resources/WS/xmlBodies/getBooking.xml", Map.of("booking_id", bookingId));
             })) // Specify the XML body
             .check(status().is(200))
     );
@@ -83,7 +84,7 @@ public class PoloWSScenario {
             .post("/")
             .body(StringBody(session -> {
                 String bookingId = XMLFileReader.extractValueFromXML(session.getString("responseBody"), "//Transaction/Booking/Price/@Value");
-                return XMLFileReader.readXmlWithReplacePlaceholders("src/resources/xmlBodies/searchBooking.xml", Map.of("booking_id", bookingId));
+                return XMLFileReader.readXmlWithReplacePlaceholders("src/test/resources/WS/xmlBodies/searchBooking.xml", Map.of("booking_id", bookingId));
             })) // Specify the XML body
             .check(status().is(200))
     );
@@ -92,7 +93,7 @@ public class PoloWSScenario {
             .post("/")
             .body(StringBody(session -> {
                 String bookingId = XMLFileReader.extractValueFromXML(session.getString("responseBody"), "//Transaction/Booking/Price/@Value");
-                return XMLFileReader.readXmlWithReplacePlaceholders("src/resources/xmlBodies/updateBooking.xml", Map.of("booking_id", bookingId, "Prestation", prestation));
+                return XMLFileReader.readXmlWithReplacePlaceholders("src/test/resources/WS/xmlBodies/updateBooking.xml", Map.of("booking_id", bookingId, "Prestation", prestation));
             })) // Specify the XML body
             .check(status().is(200))
     );
@@ -101,14 +102,14 @@ public class PoloWSScenario {
             .post("/")
             .body(StringBody(session -> {
                 String bookingId = XMLFileReader.extractValueFromXML(session.getString("responseBody"), "//Transaction/Booking/Price/@Value");
-                return XMLFileReader.readXmlWithReplacePlaceholders("src/resources/xmlBodies/cancelBooking.xml", Map.of("booking_id", bookingId));
+                return XMLFileReader.readXmlWithReplacePlaceholders("src/test/resources/WS/xmlBodies/cancelBooking.xml", Map.of("booking_id", bookingId));
             })) // Specify the XML body
             .check(status().is(200))
     );
 
     public ScenarioBuilder mainScenario() {
         return scenario("WSChain")
-                .during(this.duration)
+                .forever()
                 .on(
                     exec(getQALarge)
                     .exec(getQAPrecis)
