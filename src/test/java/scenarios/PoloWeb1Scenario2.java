@@ -86,7 +86,7 @@ public class PoloWeb1Scenario2 {
                 }))
                 .exec(session -> {
                     CustomerSearchPage customerSearchPage = (CustomerSearchPage) session.get("customerSearchPage");
-                    customerSearchPage.searchCustomerByNameData("SANTIER", "JEAN-MARC", "50350");
+                    customerSearchPage.searchCustomerByEmail("cjmsantier@orange.fr");
                     return session;
                 })
                 .exec(genericAction("Fill Client Data", session -> {
@@ -101,7 +101,7 @@ public class PoloWeb1Scenario2 {
                 }))
                 .exec(session -> {
                     AvailabilityPage availabilityPage = (AvailabilityPage) session.get("availabilityPage");
-                    availabilityPage.enterStartDate(dateDebut);
+                    availabilityPage.enterStartAndEndDate(dateDebut, dateFin);
                     availabilityPage.selectSite(site);
                     return session;
                 })
