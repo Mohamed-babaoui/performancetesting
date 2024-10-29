@@ -48,12 +48,12 @@ public class PoloWeb1Scenario {
     public ScenarioBuilder mainScenario() {
 
         return scenario("Polo Web - Scenario 1")
-            .forever()
+            .repeat(1)
             .on(
                 pause(1) // Brief delay to ensure the user is registered as active
                 .exec(session -> {
                     // Init driver and driver_id
-                    String driver_id = BrowserManager.createWebDriver();
+                    String driver_id = BrowserManager.createWebDriver("chrome");
                     WebDriver driver = BrowserManager.getWebDriver(driver_id);
                     // Save driver and driver_id in session
                     session = session.set("driver_id", driver_id);

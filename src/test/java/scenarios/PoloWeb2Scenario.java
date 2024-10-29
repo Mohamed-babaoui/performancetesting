@@ -12,61 +12,63 @@ import static gatling.generic.plugin.GenericDsl.genericAction;
 import static io.gatling.javaapi.core.CoreDsl.pause;
 import static io.gatling.javaapi.core.CoreDsl.scenario;
 
-public class PoloWeb1Scenario2 {
+public class PoloWeb2Scenario {
 
     protected Properties config;
     protected Properties testData;
 
     public String baseUrl = null;
     public String username = null;
+    public String email = null;
     public String password = null;
     public String site = null;
     public String dateDebut = null;
+    public String dateFin = null;
     public String commentaire = null;
-    public String driver_id = BrowserManager.createWebDriver();
-    public WebDriver driver = BrowserManager.getWebDriver(driver_id);
 
-    public PoloWeb1Scenario2() {
+    public PoloWeb2Scenario() {
         config = new Properties();
         try {
-            config.load(PoloWeb1Scenario2.class.getClassLoader().getResourceAsStream("config.properties"));
+            config.load(PoloWeb2Scenario.class.getClassLoader().getResourceAsStream("config.properties"));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
         testData = new Properties();
         try {
-            testData.load(PoloWeb1Scenario2.class.getClassLoader().getResourceAsStream("testdata.properties"));
+            testData.load(PoloWeb2Scenario.class.getClassLoader().getResourceAsStream("testdata.properties"));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
 
         baseUrl = testData.getProperty("URL");
         username = config.getProperty("username");
+        email = config.getProperty("email");
         password = config.getProperty("password");
         site = testData.getProperty("Site");
         dateDebut = testData.getProperty("DateDebut");
+        dateFin = testData.getProperty("DateFin");
         commentaire = testData.getProperty("Commentaire");
     }
 
     public ScenarioBuilder mainScenario() {
 
-        return scenario("Polo Web - Scenario 1")
-            .forever()
+        return scenario("Polo Web - Scenario 2")
+            .repeat(1)
             .on(
                 pause(1) // Brief delay to ensure the user is registered as active
                 .exec(session -> {
                     // Init driver and driver_id
-                    /*String driver_id = BrowserManager.createWebDriver();
-                    WebDriver driver = BrowserManager.getWebDriver(driver_id);*/
+                    String driver_id = BrowserManager.createWebDriver("chrome");
+                    WebDriver driver = BrowserManager.getWebDriver(driver_id);
                     // Save driver and driver_id in session
-                    session = session.set("driver_id", this.driver_id);
-                    session = session.set("driver", this.driver);
+                    session = session.set("driver_id", driver_id);
+                    session = session.set("driver", driver);
                     // Init Page Objects
-                    LoginPage loginPage = new LoginPage(this.driver);
-                    CustomerSearchPage customerSearchPage = new CustomerSearchPage(this.driver);
-                    AvailabilityPage availabilityPage = new AvailabilityPage(this.driver);
-                    ReservationPage reservationPage = new ReservationPage(this.driver);
-                    ConfirmationPage confirmationPage = new ConfirmationPage(this.driver);
+                    LoginPage loginPage = new LoginPage(driver);
+                    CustomerSearchPage customerSearchPage = new CustomerSearchPage(driver);
+                    AvailabilityPage availabilityPage = new AvailabilityPage(driver);
+                    ReservationPage reservationPage = new ReservationPage(driver);
+                    ConfirmationPage confirmationPage = new ConfirmationPage(driver);
                     // Save page objects in session
                     session = session.set("loginPage", loginPage);
                     session = session.set("customerSearchPage", customerSearchPage);
@@ -86,7 +88,7 @@ public class PoloWeb1Scenario2 {
                 }))
                 .exec(session -> {
                     CustomerSearchPage customerSearchPage = (CustomerSearchPage) session.get("customerSearchPage");
-                    customerSearchPage.searchCustomerByNameData("SANTIER", "JEAN-MARC", "50350");
+                    customerSearchPage.searchCustomerByEmail(email);
                     return session;
                 })
                 .exec(genericAction("Fill Client Data", session -> {
@@ -101,7 +103,7 @@ public class PoloWeb1Scenario2 {
                 }))
                 .exec(session -> {
                     AvailabilityPage availabilityPage = (AvailabilityPage) session.get("availabilityPage");
-                    availabilityPage.enterStartDate(dateDebut);
+                    availabilityPage.enterStartAndEndDate(dateDebut, dateFin);
                     availabilityPage.selectSite(site);
                     return session;
                 })
@@ -152,6 +154,7 @@ public class PoloWeb1Scenario2 {
                 .exec(session -> {
                     ConfirmationPage confirmationPage = (ConfirmationPage) session.get("confirmationPage");
                     confirmationPage.cancelBooking();
+                    BrowserManager.deleteWebDriver((String)session.get("driver_id"));
                     return session;
                 })
             );

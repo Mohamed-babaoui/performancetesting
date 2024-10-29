@@ -4,17 +4,17 @@ import config.utils.BrowserManager;
 import io.gatling.javaapi.core.ScenarioBuilder;
 import io.gatling.javaapi.core.Simulation;
 import scenarios.PoloWeb1Scenario;
-import scenarios.PoloWeb1Scenario2;
+import scenarios.PoloWeb2Scenario;
 
 import java.io.IOException;
 
 import static io.gatling.javaapi.core.CoreDsl.atOnceUsers;
 
-public class PoloWeb1Simulation2 extends Simulation {
-    public PoloWeb1Scenario2 poloWeb1Scenario = new PoloWeb1Scenario2();
-    ScenarioBuilder scenario = poloWeb1Scenario.mainScenario();
+public class PoloWeb2Simulation extends Simulation {
+    public PoloWeb2Scenario poloWeb2Scenario = new PoloWeb2Scenario();
+    ScenarioBuilder scenario = poloWeb2Scenario.mainScenario();
 
-    public PoloWeb1Simulation2() throws IOException {
+    public PoloWeb2Simulation() throws IOException {
     }
 
     @Override
@@ -31,6 +31,6 @@ public class PoloWeb1Simulation2 extends Simulation {
     {
         setUp(
                 scenario.injectOpen(atOnceUsers(1))
-        ).maxDuration(600);
+        );
     }
 }

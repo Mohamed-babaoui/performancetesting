@@ -19,6 +19,7 @@ public class GenericCoreActionBuilder implements ActionBuilder {
 
     @Override
     public Action build(ScenarioContext ctx, Action next) {
+        /*return new GenericActionScala(name, function, ctx, next);*/
         return new GenericActionScala(name, function, ctx, next);
     }
 

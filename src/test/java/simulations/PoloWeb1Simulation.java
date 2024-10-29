@@ -30,6 +30,6 @@ public class PoloWeb1Simulation extends Simulation {
     {
         setUp(
                 scenario.injectOpen(atOnceUsers(1))
-        ).maxDuration(600);
+        );
     }
 }

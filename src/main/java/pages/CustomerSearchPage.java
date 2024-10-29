@@ -35,10 +35,13 @@ public class CustomerSearchPage extends BasePage {
 
 
     // For Scenario2: Search by email
-    public void searchCustomerByEmail(String email) throws InterruptedException {
+    public void searchCustomerByEmail(String email) {
         wait.until(ExpectedConditions.elementToBeClickable(emailField)).sendKeys("cjmsantier@orange.fr");
-
-        Thread.sleep(2000);
+        try {
+            Thread.sleep(2000);
+        } catch (Exception e){
+            e.printStackTrace();
+        }
 
     }
 
