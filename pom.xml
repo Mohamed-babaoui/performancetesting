@@ -104,6 +104,15 @@
                 <version>${maven-jar-plugin.version}</version>
             </plugin>
         </plugins>
+        <resources>
+            <resource>
+                <directory>src/test/resources</directory>
+                <filtering>true</filtering> <!-- Enable filtering for general resources -->
+                <excludes>
+                    <exclude>src/test/resources/WS/xmlBodies/**</exclude>
+                </excludes>
+            </resource>
+        </resources>
     </build>
     <profiles>
         <profile>
@@ -130,6 +139,15 @@
                         </configuration>
                     </plugin>
                 </plugins>
+                <resources>
+                    <resource>
+                        <directory>src/test/resources</directory>
+                        <filtering>true</filtering> <!-- Enable filtering for general resources -->
+                        <excludes>
+                            <exclude>src/test/resources/WS/xmlBodies/**</exclude>
+                        </excludes>
+                    </resource>
+                </resources>
             </build>
         </profile>
         <profile>
@@ -156,7 +174,17 @@
                         </configuration>
                     </plugin>
                 </plugins>
+                <resources>
+                    <resource>
+                        <directory>src/test/resources</directory>
+                        <filtering>true</filtering> <!-- Enable filtering for general resources -->
+                        <excludes>
+                            <exclude>src/test/resources/WS/xmlBodies/**</exclude>
+                        </excludes>
+                    </resource>
+                </resources>
             </build>
         </profile>
     </profiles>
+
 </project>
