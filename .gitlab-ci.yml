@@ -45,7 +45,7 @@ run_polo_ws:
     ASSURANCE: "XXXACPACKDY"
     PRESTATION: "BTPANIMAL"
     URL: "http://azweupljbd03.pvcp.intra:8080/polo-ws/services/WsService?wsdl"
-    MAIL_LIST: "mohammed.eljadi@ext.groupepvcp.com, mohammed.babaoui@ext.groupepvcp.com"
+    MAIL_LIST: "mohammed.eljadi@ext.groupepvcp.com,mohammed.babaoui@ext.groupepvcp.com"
     DURATION: "60"
   script:
     - mvn compile exec:java -Prun-polo-WS -Dsite=$SITE -Dhebergement=$HEBERGEMENT -Ddate=$DATE -Dassurance=$ASSURANCE -Dprestation=$PRESTATION -Durl=$URL -Dduration=$DURATION -Dmail_list=$MAIL_LIST
@@ -60,7 +60,7 @@ run_polo_web:
     MAVEN_OPTS: "-Dhttps.protocols=TLSv1.2 -Dmaven.repo.local=.m2/repository"
     SITE: "La Corniche de la Plage"
     URL: "https://polo-booking-a5.pvcp.intra/polo-booking/booking/view/login/screen/login.jsf"
-    MAIL_LIST: "mohammed.eljadi@ext.groupepvcp.com, mohammed.babaoui@ext.groupepvcp.com"
+    MAIL_LIST: "mohammed.eljadi@ext.groupepvcp.com,mohammed.babaoui@ext.groupepvcp.com"
     DURATION: "60"
     DATEDEBUT: "01/06/2024"
     DATEFIN: "15/06/2024"
