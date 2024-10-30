@@ -71,7 +71,7 @@ run_polo_web:
     COMMENTAIRE: "test perf 30-10-24"
   script:
     - mvn clean install -Prun-polo-Web -DprofileIdEnabled=true
-    - mvn compile exec:java -Prun-polo-Web -Dsite="${SITE}" -Durl=$URL -Dduration=$DURATION -Dmail_list=$MAIL_LIST -DdateDebut=$DATEDEBUT -DdateFin=$DATEFIN -Dcommentaire=$COMMENTAIRE
+    - mvn compile exec:java -Prun-polo-Web -Dsite="${SITE}" -Durl=$URL -Dduration=$DURATION -Dmail_list=$MAIL_LIST -DdateDebut=$DATEDEBUT -DdateFin=$DATEFIN -Dcommentaire="${COMMENTAIRE}"
   artifacts:
     paths:
       - target/gatling/
