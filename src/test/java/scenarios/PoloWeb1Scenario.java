@@ -22,6 +22,7 @@ public class PoloWeb1Scenario {
     public String site = null;
     public String dateDebut = null;
     public String commentaire = null;
+    public String duration = null;
 
     public PoloWeb1Scenario() {
         config = new Properties();
@@ -43,12 +44,13 @@ public class PoloWeb1Scenario {
         site = testData.getProperty("Site");
         dateDebut = testData.getProperty("DateDebut");
         commentaire = testData.getProperty("Commentaire");
+        duration = testData.getProperty("duration");
     }
 
     public ScenarioBuilder mainScenario() {
 
         return scenario("Polo Web - Scenario 1")
-            .repeat(2)
+            .during(this.duration)
             .on(
                 pause(1) // Brief delay to ensure the user is registered as active
                 .exec(session -> {

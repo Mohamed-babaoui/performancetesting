@@ -109,7 +109,7 @@ public class PoloWSScenario {
 
     public ScenarioBuilder mainScenario() {
         return scenario("WSChain")
-                .forever()
+                .during(this.duration)
                 .on(
                     exec(getQALarge)
                     .exec(getQAPrecis)
