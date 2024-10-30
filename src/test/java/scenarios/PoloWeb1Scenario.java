@@ -38,13 +38,13 @@ public class PoloWeb1Scenario {
             throw new RuntimeException(e);
         }
 
-        baseUrl = testData.getProperty("URL");
+        baseUrl = System.getProperty("url");
         username = config.getProperty("username");
         password = config.getProperty("password");
-        site = testData.getProperty("Site");
-        dateDebut = testData.getProperty("DateDebut");
-        commentaire = testData.getProperty("Commentaire");
-        duration = testData.getProperty("duration");
+        site = System.getProperty("site");
+        dateDebut = System.getProperty("dateDebut");
+        commentaire = System.getProperty("commentaire");
+        duration = System.getProperty("duration");
     }
 
     public ScenarioBuilder mainScenario() {

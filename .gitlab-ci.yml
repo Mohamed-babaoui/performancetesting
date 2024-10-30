@@ -50,6 +50,9 @@ run_polo_ws:
   script:
     - mvn clean install -Prun-polo-WS -DprofileIdEnabled=true
     - mvn compile exec:java -Prun-polo-WS -Dsite=$SITE -Dhebergement=$HEBERGEMENT -Ddate=$DATE -Dassurance=$ASSURANCE -Dprestation=$PRESTATION -Durl=$URL -Dduration=$DURATION -Dmail_list=$MAIL_LIST
+  artifacts:
+    paths:
+      - target/gatling/
   timeout: 3h
 
 run_polo_web:
@@ -69,5 +72,8 @@ run_polo_web:
   script:
     - mvn clean install -Prun-polo-Web -DprofileIdEnabled=true
     - mvn compile exec:java -Prun-polo-Web -Dsite=$SITE -Durl=$URL -Dduration=$DURATION -Dmail_list=$MAIL_LIST -DdateDebut=$DATEDEBUT -DdateFin=$DATEFIN -Dcommentaire=$COMMENTAIRE
+  artifacts:
+    paths:
+      - target/gatling/
   timeout: 3h
 

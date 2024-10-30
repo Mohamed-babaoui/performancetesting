@@ -41,15 +41,15 @@ public class PoloWeb2Scenario {
             throw new RuntimeException(e);
         }
 
-        baseUrl = testData.getProperty("URL");
+        baseUrl = System.getProperty("url");
         username = config.getProperty("username");
         email = config.getProperty("email");
         password = config.getProperty("password");
-        site = testData.getProperty("Site");
-        dateDebut = testData.getProperty("DateDebut");
-        dateFin = testData.getProperty("DateFin");
-        commentaire = testData.getProperty("Commentaire");
-        duration = testData.getProperty("duration");
+        site = System.getProperty("site");
+        dateDebut = System.getProperty("dateDebut");
+        dateFin = System.getProperty("dateFin");
+        commentaire = System.getProperty("commentaire");
+        duration = System.getProperty("duration");
     }
 
     public ScenarioBuilder mainScenario() {
