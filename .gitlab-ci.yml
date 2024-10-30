@@ -59,7 +59,7 @@ run_polo_web:
       - $CI_JOB_NAME == "run-polo-Web"
   variables:
     MAVEN_OPTS: "-Dhttps.protocols=TLSv1.2 -Dmaven.repo.local=.m2/repository"
-    SITE: "La Corniche de la Plage"
+    SITE: "La\ Corniche\ de\ la\ Plage"
     URL: "https://polo-booking-a5.pvcp.intra/polo-booking/booking/view/login/screen/login.jsf"
     MAIL_LIST: "mohammed.eljadi@ext.groupepvcp.com,mohammed.babaoui@ext.groupepvcp.com"
     DURATION: "60"
