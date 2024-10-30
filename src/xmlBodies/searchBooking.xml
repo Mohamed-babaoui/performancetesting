@@ -1,0 +1,40 @@
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xft="http://www.exchangefortravel.org/xft/current" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <soapenv:Header>
+        <wsse:Security soapenv:mustUnderstand="1" xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd">
+            <wsse:UsernameToken wsu:Id="UsernameToken-16009048" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd">
+                <wsse:Username>svc-test-healthcheck</wsse:Username>
+                <wsse:Password Type="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-username-token-profile-1.0#PasswordText">986+PRTy</wsse:Password>
+                <wsu:Created>2014-07-08T10:26:01+02:00</wsu:Created>
+            </wsse:UsernameToken>
+        </wsse:Security>
+    </soapenv:Header>
+    <soapenv:Body>
+        <Transaction TimeStamp="2015-04-20T08:34:21+00:00" Version="1.1" xsi:schemaLocation="http://www.exchangefortravel.org/xft/current http://www.exchangefortravel.org/xft/current/xft.xsd" xsi:type="TransactionRequestType" xmlns="http://www.exchangefortravel.org/xft/current" xmlns:xi="http://www.w3.org/2001/XInclude">
+            <Control>
+                <Requester Channel="Intranet" Application="ALP" Engine="Amadeus" Tool="BookingEngine">
+                    <Country Code="FR"/>
+                    <Person>
+                        <Codes>
+                            <Code Role="Offer" Name="RatePlan"/>
+                        </Codes>
+                    </Person>
+
+                </Requester>
+            </Control>
+            <Action Code="Booking" Purpose="Search"/>
+
+
+            <Style Direction="Out">
+
+                <Language Code="FR"/>
+            </Style>
+            <Booking>
+                <Codes>
+                    <Code  Role="Reference" Value="${booking_id}"/>
+                </Codes>
+
+
+            </Booking>
+        </Transaction>
+    </soapenv:Body>
+</soapenv:Envelope>
