@@ -34,10 +34,6 @@ build-job:
 
 run_polo_ws:
   stage: run
-  rules:
-    - changes:
-        - ":/*"
-        - ":!src/main/java/**/*"
   only:
     variables:
       - $CI_JOB_NAME == "run-polo-WS"
@@ -57,10 +53,6 @@ run_polo_ws:
 
 run_polo_web:
   stage: run
-  rules:
-    - changes:
-        - ":/*"
-        - ":!src/main/java/**/*"
   only:
     variables:
       - $CI_JOB_NAME == "run-polo-Web"
