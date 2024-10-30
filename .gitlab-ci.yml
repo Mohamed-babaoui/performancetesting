@@ -48,7 +48,8 @@ run_polo_ws:
     MAIL_LIST: "mohammed.eljadi@ext.groupepvcp.com,mohammed.babaoui@ext.groupepvcp.com"
     DURATION: "60"
   script:
-    - mvn compile exec:java -Prun-polo-WS -Dsite=$SITE -Dhebergement=$HEBERGEMENT -Ddate=$DATE -Dassurance=$ASSURANCE -Dprestation=$PRESTATION -Durl=$URL -Dduration=$DURATION -Dmail_list=$MAIL_LIST
+    - mvn clean install -Prun-polo-WS -DprofileIdEnabled=true
+    - mvn exec:java -Prun-polo-WS -Dsite=$SITE -Dhebergement=$HEBERGEMENT -Ddate=$DATE -Dassurance=$ASSURANCE -Dprestation=$PRESTATION -Durl=$URL -Dduration=$DURATION -Dmail_list=$MAIL_LIST
   timeout: 3h
 
 run_polo_web:
@@ -66,6 +67,7 @@ run_polo_web:
     DATEFIN: "15/06/2024"
     COMMENTAIRE: "test perf 30-10-24"
   script:
-    - mvn compile exec:java -Prun-polo-Web -Dsite=$SITE -Durl=$URL -Dduration=$DURATION -Dmail_list=$MAIL_LIST -DdateDebut=$DATEDEBUT -DdateFin=$DATEFIN -Dcommentaire=$COMMENTAIRE
+    - mvn clean install -Prun-polo-Web -DprofileIdEnabled=true
+    - mvn exec:java -Prun-polo-Web -Dsite=$SITE -Durl=$URL -Dduration=$DURATION -Dmail_list=$MAIL_LIST -DdateDebut=$DATEDEBUT -DdateFin=$DATEFIN -Dcommentaire=$COMMENTAIRE
   timeout: 3h
 
