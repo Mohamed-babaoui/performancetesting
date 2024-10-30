@@ -1,0 +1,79 @@
+default:
+  image: maven:3.9.8-sapmachine-21
+  tags:
+    - azure
+    - docker
+    - testing
+
+cache:
+  paths:
+    - .m2/repository/
+  key: maven-$CI_COMMIT_REF_SLUG
+
+
+stages:
+  - build
+  - run
+
+
+build-job:
+  stage: build
+  rules:
+    - exists:
+    - changes:
+        - ":/*"
+        - ":!src/main/java/**/*"
+  variables:
+    MAVEN_OPTS: -Dhttps.protocols=TLSv1.2 -Dmaven.repo.local=.m2/repository 
+  script:
+    - mvn -B dependency:resolve-plugins dependency:go-offline
+    - mvn -B dependency:get -Dartifact=org.apache.maven:maven-core:3.9.8
+  artifacts:
+    paths:
+      - target
+
+run_polo_ws:
+  stage: run
+  rules:
+    - changes:
+        - ":/*"
+        - ":!src/main/java/**/*"
+  only:
+    variables:
+      - $CI_JOB_NAME == "run-polo-WS"
+  variables:
+    MAVEN_OPTS: "-Dhttps.protocols=TLSv1.2 -Dmaven.repo.local=.m2/repository"
+    SITE: "BTP"
+    HEBERGEMENT: "BTP24X"
+    DATE: "2025-02-25"
+    ASSURANCE: "XXXACPACKDY"
+    PRESTATION: "BTPANIMAL"
+    URL: "http://azweupljbd03.pvcp.intra:8080/polo-ws/services/WsService?wsdl"
+    MAIL_LIST: "mohammed.eljadi@ext.groupepvcp.com, mohammed.babaoui@ext.groupepvcp.com"
+    DURATION: "60"
+  script:
+    - mvn compile exec:java -Dsite=$SITE -Dhebergement=$HEBERGEMENT -Ddate=$DATE -Dassurance=$ASSURANCE -Dprestation=$PRESTATION -Durl=$URL -Dduration=$DURATION -Dmail_list=$MAIL_LIST
+  timeout: 3h
+
+run_polo_web:
+  stage: run
+  rules:
+    - changes:
+        - ":/*"
+        - ":!src/main/java/**/*"
+  only:
+    variables:
+      - $CI_JOB_NAME == "run-polo-Web"
+  variables:
+    MAVEN_OPTS: "-Dhttps.protocols=TLSv1.2 -Dmaven.repo.local=.m2/repository"
+    SITE: "La Corniche de la Plage"
+    URL: "https://polo-booking-a5.pvcp.intra/polo-booking/booking/view/login/screen/login.jsf"
+    MAIL_LIST: "mohammed.eljadi@ext.groupepvcp.com, mohammed.babaoui@ext.groupepvcp.com"
+    DURATION: "60"
+    DATEDEBUT: "01/06/2024"
+    DATEFIN: "15/06/2024"
+    COMMENTAIRE: "test perf 30-10-24"
+  script:
+    - mvn compile exec:java -Dsite=$SITE -Durl=$URL -Dduration=$DURATION -Dmail_list=$MAIL_LIST -DdateDebut=$DATEDEBUT -DdateFin=$DATEFIN -Dcommentaire=$COMMENTAIRE
+  timeout: 3h
+

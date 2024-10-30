@@ -18,7 +18,7 @@ public class PoloWSScenario {
     private static Properties props = new Properties();
     static {
         try {
-            props.load(PoloWSScenario.class.getClassLoader().getResourceAsStream("WS/simulation2.properties"));
+            props.load(PoloWSScenario.class.getClassLoader().getResourceAsStream("WS/simulation.properties"));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

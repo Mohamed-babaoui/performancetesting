@@ -53,7 +53,7 @@ public class PoloWeb2Scenario {
     public ScenarioBuilder mainScenario() {
 
         return scenario("Polo Web - Scenario 2")
-            .repeat(1)
+            .repeat(2)
             .on(
                 pause(1) // Brief delay to ensure the user is registered as active
                 .exec(session -> {
