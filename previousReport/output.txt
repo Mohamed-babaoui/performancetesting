@@ -1,0 +1,9 @@
+Request Name         Count           Average (ms)    Min (ms)        Max (ms)        Stdev (ms)      Error (%)       Throughput (rq/s)
+GetQALarge           27              812.32          701             946             74.11           0.00            1.30
+SearchBooking        25              142.75          116             178             16.24           0.00            1.20
+CancelBooking        24              184.56          120             987             172.36          0.00            1.18
+GetQAPrecis          27              523.87          462             598             31.45           0.00            1.30
+GetBooking           24              164.43          118             398             62.82           0.00            1.18
+CreateBooking        24              752.19          641             1360            172.50          0.00            1.18
+UpdateBooking        24              165.83          125             498             79.41           0.00            1.18
+Total                175             392.85          116             1360            285.74          0.00            8.52
