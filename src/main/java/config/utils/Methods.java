@@ -54,9 +54,9 @@ public class Methods {
 
         System.out.println(conclusion);
         if (conclusion.charAt(0) == '+')
-            resultString = "meilleurs de l’ordre de " + conclusion;
+            resultString = "meilleures de l’ordre de " + conclusion;
         else if (conclusion.charAt(0) == '-')
-            resultString = "degradé de l’ordre de " + conclusion;
+            resultString = "degradées de l’ordre de " + conclusion;
 
         Properties properties = new Properties();
         properties.put("mail.smtp.auth", "true");
@@ -200,9 +200,9 @@ public class Methods {
 
         System.out.println(conclusion);
         if (conclusion.charAt(0) == '+')
-            resultString = "meilleurs de l’ordre de " + conclusion;
+            resultString = "meilleures de l’ordre de " + conclusion;
         else if (conclusion.charAt(0) == '-')
-            resultString = "degradé de l’ordre de " + conclusion;
+            resultString = "degradées de l’ordre de " + conclusion;
 
         Properties properties = new Properties();
         properties.put("mail.smtp.auth", "true");
