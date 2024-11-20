@@ -43,7 +43,7 @@ class ComparisonData {
 
     private double calculatePercentageDifference(double oldAverage, double newAverage) {
         if (oldAverage == 0) return 0; // Avoid division by zero
-        double difference = ((newAverage - oldAverage) / oldAverage) * 100;
+        double difference = ((oldAverage - newAverage) / oldAverage) * 100;
         return difference;
     }
 
