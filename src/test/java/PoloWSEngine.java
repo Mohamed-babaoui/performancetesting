@@ -238,7 +238,7 @@ public class PoloWSEngine {
             if (oldAverage == 0)
                 totalConclusion = "0%"; // Avoid division by zero
             else
-                totalConclusion = String.format("%+,13.2f%%", ((newAverage - oldAverage) / oldAverage) * 100);
+                totalConclusion = String.format("%+,13.2f%%", ((oldAverage - newAverage) / oldAverage) * 100);
             oldTotal += oldAverage;
             newTotal += newAverage;
         }
