@@ -1,23 +1,31 @@
+import config.utils.Methods;
 import io.gatling.app.Gatling;
 import io.gatling.core.config.GatlingPropertiesBuilder;
 import org.apache.hc.core5.ssl.SSLContextBuilder;
+import org.knowm.xchart.BitmapEncoder;
+import org.knowm.xchart.XYChart;
+import org.knowm.xchart.XYChartBuilder;
+import org.knowm.xchart.style.Styler;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import simulations.PoloWeb1Simulation;
 import simulations.PoloWeb2Simulation;
 
+import javax.mail.MessagingException;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
 import java.io.*;
 import java.net.URL;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.cert.X509Certificate;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class PoloWeb2Engine {
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, MessagingException {
 
         try {
             // Step 1: Set up SSLContext to trust all certificates
@@ -35,6 +43,10 @@ public class PoloWeb2Engine {
             e.printStackTrace();
         }
 
+        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy '-' HH:mm:ss");
+        formatter.setTimeZone(TimeZone.getTimeZone("Europe/Paris"));
+        Date simulationStart = new Date(System.currentTimeMillis());
+
         GatlingPropertiesBuilder props = new GatlingPropertiesBuilder()
                 .resourcesDirectory(IDEPathHelper.mavenResourcesDirectory.toString())
                 .resultsDirectory(IDEPathHelper.resultsDirectory.toString())
@@ -42,6 +54,7 @@ public class PoloWeb2Engine {
                 .simulationClass(PoloWeb2Simulation.class.getName());
 
         Gatling.fromMap(props.build());
+        Date simulationEnd = new Date(System.currentTimeMillis());
 
         Path resultsDir = Paths.get("target/gatling");
         String latestExecutionFolder = getLatestExecutionFolder(resultsDir.toFile());
@@ -67,7 +80,182 @@ public class PoloWeb2Engine {
 
         System.out.println("1111111111111111111111111111111111111111111111111111111111111");
 
-        /*System.exit(0);*/
+        String oldFilePath = "src/test/oldWeb/summary.txt";
+        String newFilePath = currentSimulationDir+"/output.txt";
+        String outputFilePath = currentSimulationDir+"/compare.txt";
+
+
+        // Call the comparison function
+        String conclusion = "";
+        conclusion = compareAverages(oldFilePath, newFilePath, outputFilePath).replaceAll("\\s", "");
+
+        Map<String, List<Long>> elapsedTimesByRequestType = new HashMap<>();
+        Map<String, List<Long>> responseTimesByRequestType = new HashMap<>();
+
+        parseRequestDurations(currentSimulationDir+"/simulation.log", elapsedTimesByRequestType, responseTimesByRequestType);
+        adjustElapsedTimesToStartFromZero(elapsedTimesByRequestType);
+        // Create and save the chart as an image
+        if (elapsedTimesByRequestType.isEmpty() || responseTimesByRequestType.isEmpty()) {
+            System.err.println("No valid request durations found. Please check the input file.");
+        } else {
+            createAndSaveLineChart(elapsedTimesByRequestType, responseTimesByRequestType, currentSimulationDir+"/graph.png");
+        }
+
+        String content = Files.readString(Path.of("src/test/oldWeb/info.txt"));
+        String oldStartDate = content.split(",")[0];
+        String oldVersion = content.split(",")[1];
+        Methods.sendMailWeb(currentSimulationDir+"/graph.png", newFilePath, oldFilePath, outputFilePath, simulationStart, simulationEnd, conclusion, oldStartDate, oldVersion);
+    }
+
+    private static void parseRequestDurations(String filePath,
+                                              Map<String, List<Long>> elapsedTimesByRequestType,
+                                              Map<String, List<Long>> responseTimesByRequestType) {
+        try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                line = line.trim();
+
+                if (line.startsWith("REQUEST")) {
+                    String[] tokens = line.split("\\s+");
+
+                    if (tokens.length >= 5) {
+                        String requestType = tokens[1];
+                        long startTime = Long.parseLong(tokens[2]);
+                        long endTime = Long.parseLong(tokens[3]);
+                        long duration = endTime - startTime;
+
+                        elapsedTimesByRequestType
+                                .computeIfAbsent(requestType, k -> new ArrayList<>())
+                                .add(startTime);
+                        responseTimesByRequestType
+                                .computeIfAbsent(requestType, k -> new ArrayList<>())
+                                .add(duration);
+                    } else {
+                        System.err.println("Skipping line (not enough tokens): " + line);
+                    }
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static void adjustElapsedTimesToStartFromZero(Map<String, List<Long>> elapsedTimesByRequestType) {
+        // Find the minimum start time across all request types
+        long minStartTime = Long.MAX_VALUE;
+        for (List<Long> times : elapsedTimesByRequestType.values()) {
+            if (!times.isEmpty()) {
+                minStartTime = Math.min(minStartTime, times.get(0));
+            }
+        }
+
+        // Adjust each start time by subtracting the minimum start time
+        for (List<Long> times : elapsedTimesByRequestType.values()) {
+            for (int i = 0; i < times.size(); i++) {
+                times.set(i, times.get(i) - minStartTime);
+            }
+        }
+    }
+
+    private static void createAndSaveLineChart(Map<String, List<Long>> elapsedTimesByRequestType,
+                                               Map<String, List<Long>> responseTimesByRequestType,
+                                               String outputImagePath) {
+        XYChart chart = new XYChartBuilder()
+                .width(1024)
+                .height(600)
+                .title("Response Times Over Time")
+                .xAxisTitle("Elapsed Time (ms)")
+                .yAxisTitle("Response Time (ms)")
+                .build();
+
+        chart.getStyler().setLegendPosition(Styler.LegendPosition.OutsideE);
+
+        for (String requestType : elapsedTimesByRequestType.keySet()) {
+            List<Long> elapsedTimes = elapsedTimesByRequestType.get(requestType);
+            List<Long> responseTimes = responseTimesByRequestType.get(requestType);
+            chart.addSeries(requestType, elapsedTimes, responseTimes);
+        }
+
+        try {
+            if (chart.getSeriesMap().isEmpty()) {
+                System.err.println("Error: No valid data to plot on the chart.");
+                return;
+            }
+
+            BitmapEncoder.saveBitmap(chart, outputImagePath, BitmapEncoder.BitmapFormat.PNG);
+            System.out.println("Chart saved as: " + outputImagePath);
+        } catch (IOException e) {
+            System.err.println("Error saving chart: " + e.getMessage());
+        }
+    }
+
+    public static String compareAverages(String oldFilePath, String newFilePath, String outputFilePath) {
+        Map<String, Double> oldAverages = parseAverages(oldFilePath);
+        Map<String, Double> newAverages = parseAverages(newFilePath);
+
+        String totalConclusion = "";
+
+        List<ComparisonData> comparisons = new ArrayList<>();
+        double oldTotal = 0, newTotal = 0;
+
+        for (String requestName : newAverages.keySet()) {
+            if (requestName.equals("Total"))
+                continue;
+            double oldAverage = oldAverages.getOrDefault(requestName, 0.0);
+            double newAverage = newAverages.get(requestName);
+            comparisons.add(new ComparisonData(requestName, oldAverage, newAverage));
+            oldTotal += oldAverage;
+            newTotal += newAverage;
+        }
+
+        for (String requestName : newAverages.keySet()) {
+            if (!requestName.equals("Total"))
+                continue;
+            double oldAverage = oldAverages.getOrDefault(requestName, 0.0);
+            double newAverage = newAverages.get(requestName);
+            comparisons.add(new ComparisonData(requestName, oldAverage, newAverage));
+            if (oldAverage == 0)
+                totalConclusion = "0%"; // Avoid division by zero
+            else
+                totalConclusion = String.format("%+,13.2f%%", ((oldAverage - newAverage) / oldAverage) * 100);
+            oldTotal += oldAverage;
+            newTotal += newAverage;
+        }
+
+        // Add total comparison
+        /*comparisons.add(new ComparisonData("Total", oldTotal, newTotal));*/
+
+        // Prepare the output content
+        StringBuilder outputContent = new StringBuilder();
+        outputContent.append(String.format("%-20s %-15s %-15s %-15s%n", "Request Name", "Old Average (ms)", "New Average (ms)", "Difference"));
+        comparisons.forEach(data -> outputContent.append(data.toString()).append("\n"));
+
+        // Write to the output file
+        try {
+            Files.writeString(Path.of(outputFilePath), outputContent.toString());
+            System.out.println("Comparison results written to: " + outputFilePath);
+        } catch (IOException e) {
+            System.err.println("Failed to write to the output file: " + e.getMessage());
+        }
+        return totalConclusion;
+    }
+
+    private static Map<String, Double> parseAverages(String filePath) {
+        Map<String, Double> averages = new HashMap<>();
+        try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
+            String line;
+            br.readLine(); // Skip header line
+            while ((line = br.readLine()) != null) {
+                String[] tokens = line.trim().split("\\s+");
+                if (tokens.length < 3) continue;
+                String requestName = tokens[0];
+                double averageMs = Double.parseDouble(tokens[2]);
+                averages.put(requestName, averageMs);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return averages;
     }
 
     private static void processLogLine(String line, Map<String, PoloWSEngine.RequestMetrics> metricsMap, long[] timeBounds) {
@@ -92,7 +280,7 @@ public class PoloWeb2Engine {
         double totalCount = 0, totalResponseTime = 0, totalErrorCount = 0, totalThroughput = 0;
         List<Long> allResponseTimes = new ArrayList<>();
 
-        String outputFilePath = currentSimulationDir+"/summary.txt";
+        String outputFilePath = currentSimulationDir+"/output.txt";
 
         PrintWriter writer = new PrintWriter(new FileWriter(outputFilePath));
 

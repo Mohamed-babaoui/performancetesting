@@ -117,15 +117,10 @@ public class PoloWSEngine {
             createAndSaveLineChart(elapsedTimesByRequestType, responseTimesByRequestType, currentSimulationDir+"/graph.png");
         }
 
-        // Create and show the line chart
-        /*createAndSaveLineChart(requestDurations, currentSimulationDir+"/grapgh.png");*/
-        /*System.exit(0);*/
-
-
         String content = Files.readString(Path.of("src/test/oldWS/info.txt"));
         String oldStartDate = content.split(",")[0];
         String oldVersion = content.split(",")[1];
-        Methods.sendMail(currentSimulationDir+"/graph.png", newFilePath, oldFilePath, outputFilePath, simulationStart, simulationEnd, conclusion, oldStartDate, oldVersion);
+        Methods.sendMailWS(currentSimulationDir+"/graph.png", newFilePath, oldFilePath, outputFilePath, simulationStart, simulationEnd, conclusion, oldStartDate, oldVersion);
     }
 
     private static void parseRequestDurations(String filePath,

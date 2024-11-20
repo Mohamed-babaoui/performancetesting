@@ -14,7 +14,9 @@ public abstract class BasePage {
     public BasePage(WebDriver driver) {
         this.driver = driver;
         // Adjust the wait time as necessary
+        System.out.println("hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh");
         this.wait = new WebDriverWait(driver, java.time.Duration.ofSeconds(100));
+        System.out.println("fffffffffffffffffffffffffffffffff");
     }
 
  /*   public  void retryingFindClick(By by) {

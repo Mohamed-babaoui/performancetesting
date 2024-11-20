@@ -24,6 +24,9 @@ public class PoloWeb1Scenario {
     public String commentaire = null;
     public String duration = null;
 
+    public String driver_id = null;
+    public WebDriver driver = null;
+
     public PoloWeb1Scenario() {
         config = new Properties();
         try {
@@ -38,13 +41,16 @@ public class PoloWeb1Scenario {
             throw new RuntimeException(e);
         }
 
-        baseUrl = testData.getProperty("url");
+        baseUrl = System.getProperty("url");
         username = config.getProperty("username");
         password = config.getProperty("password");
-        site = testData.getProperty("site");
-        dateDebut = testData.getProperty("dateDebut");
-        commentaire = testData.getProperty("commentaire");
-        duration = testData.getProperty("duration");
+        site = System.getProperty("site");
+        dateDebut = System.getProperty("dateDebut");
+        commentaire = System.getProperty("commentaire");
+        duration = System.getProperty("duration");
+
+        driver_id = BrowserManager.createWebDriver("chrome");
+        driver = BrowserManager.getWebDriver(driver_id);
     }
 
     public ScenarioBuilder mainScenario() {
@@ -55,8 +61,8 @@ public class PoloWeb1Scenario {
                 pause(1) // Brief delay to ensure the user is registered as active
                 .exec(session -> {
                     // Init driver and driver_id
-                    String driver_id = BrowserManager.createWebDriver("chrome");
-                    WebDriver driver = BrowserManager.getWebDriver(driver_id);
+                    /*String driver_id = BrowserManager.createWebDriver("chrome");
+                    WebDriver driver = BrowserManager.getWebDriver(driver_id);*/
                     // Save driver and driver_id in session
                     System.out.println(driver_id);
                     System.out.println(driver);
@@ -64,6 +70,7 @@ public class PoloWeb1Scenario {
                     session = session.set("driver", driver);
                     // Init Page Objects
                     LoginPage loginPage = new LoginPage(driver);
+                    System.out.println("login page" + loginPage);
                     CustomerSearchPage customerSearchPage = new CustomerSearchPage(driver);
                     AvailabilityPage availabilityPage = new AvailabilityPage(driver);
                     ReservationPage reservationPage = new ReservationPage(driver);
@@ -75,12 +82,15 @@ public class PoloWeb1Scenario {
                     session = session.set("reservationPage", reservationPage);
                     session = session.set("confirmationPage", confirmationPage);
                     // Launch browser
+                    System.out.println("baseurl = "+baseUrl);
                     driver.get(baseUrl);
+
                     return session;
                 })
                 .exec(genericAction("Authorization", session -> {
                     // Step 1: Authorization
                     LoginPage loginPage = (LoginPage) session.get("loginPage");
+                    System.out.println("login page" + loginPage);
                     loginPage.loginCred(username, password);
                     loginPage.login();
                     return session;
@@ -90,12 +100,12 @@ public class PoloWeb1Scenario {
                     customerSearchPage.searchCustomerByNameData("SANTIER", "JEAN-MARC", "50350");
                     return session;
                 })
-                .exec(genericAction("Fill Client Data", session -> {
+                .exec(genericAction("FillClientData", session -> {
                     CustomerSearchPage customerSearchPage = (CustomerSearchPage) session.get("customerSearchPage");
                     customerSearchPage.selectCustomer();
                     return session;
                 }))
-                .exec(genericAction("Client Found", session -> {
+                .exec(genericAction("ClientFound", session -> {
                     CustomerSearchPage customerSearchPage = (CustomerSearchPage) session.get("customerSearchPage");
                     customerSearchPage.goToAvailability();
                     return session;
@@ -106,17 +116,17 @@ public class PoloWeb1Scenario {
                     availabilityPage.selectSite(site);
                     return session;
                 })
-                .exec(genericAction("Search Availability", session -> {
+                .exec(genericAction("SearchAvailability", session -> {
                     AvailabilityPage availabilityPage = (AvailabilityPage) session.get("availabilityPage");
                     availabilityPage.searchAvailability();
                     return session;
                 }))
-                .exec(genericAction("Go To Reservation Detail", session -> {
+                .exec(genericAction("GoToReservationDetail", session -> {
                     AvailabilityPage availabilityPage = (AvailabilityPage) session.get("availabilityPage");
                     availabilityPage.selectDestination();
                     return session;
                 }))
-                .exec(genericAction("Fill Reservation Data", session -> {
+                .exec(genericAction("FillReservationData", session -> {
                     ReservationPage reservationPage = (ReservationPage) session.get("reservationPage");
                     reservationPage.fillReservationDetails(commentaire);
                     return session;
@@ -153,7 +163,7 @@ public class PoloWeb1Scenario {
                 .exec(session -> {
                     ConfirmationPage confirmationPage = (ConfirmationPage) session.get("confirmationPage");
                     confirmationPage.cancelBooking();
-                    BrowserManager.deleteWebDriver((String)session.get("driver_id"));
+                    /*BrowserManager.deleteWebDriver((String)session.get("driver_id"));*/
                     return session;
                 })
             );

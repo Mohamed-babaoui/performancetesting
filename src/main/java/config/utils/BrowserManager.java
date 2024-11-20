@@ -118,8 +118,8 @@ public class BrowserManager {
 
           // Step 3: Use RemoteWebDriver with the desired capabilities
 
-        /*System.setProperty("javax.net.ssl.trustStore", "src" + File.separator + "pvcp-intermidate.jks");
-        System.setProperty("javax.net.ssl.trustStorePassword", "97460480");*/
+        System.setProperty("javax.net.ssl.trustStore", "src" + File.separator + "pvcp-intermidate.jks");
+        System.setProperty("javax.net.ssl.trustStorePassword", "97460480");
 
         try {
             props.load(BrowserManager.class.getClassLoader().getResourceAsStream("seleniumHub.properties"));
@@ -153,6 +153,17 @@ public class BrowserManager {
 
     public static WebDriver getWebDriver(String uniqueId) {
         return webDriverMap.get(uniqueId);
+    }
+
+    public static void closeWebDriver(String uniqueId) {
+        WebDriver driver = webDriverMap.get(uniqueId);
+        if (driver != null) {
+            try {
+                driver.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     public static void deleteWebDriver(String uniqueId) {

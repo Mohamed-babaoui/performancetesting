@@ -13,7 +13,6 @@ public class PoloWSSimulation extends Simulation {
         setUp(
                 poloWS.mainScenario()
                         .injectOpen(atOnceUsers(1))
-                        .protocols(poloWS.httpProtocol))
-                .maxDuration(600);
+                        .protocols(poloWS.httpProtocol));
     }
 }
