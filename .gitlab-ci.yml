@@ -48,9 +48,10 @@ run_polo_ws:
     MAIL_LIST: "mohammed.eljadi@ext.groupepvcp.com,mohammed.babaoui@ext.groupepvcp.com"
     DURATION: "60"
     ENV: "A5"
+    ACTUAL_VERSION: "2.17.0"
   script:
     - mvn clean install -Prun-polo-WS -DprofileIdEnabled=true
-    - mvn compile exec:java -Prun-polo-WS -Dsite=$SITE -Dhebergement=$HEBERGEMENT -Ddate=$DATE -Dassurance=$ASSURANCE -Dprestation=$PRESTATION -Durl=$URL -Dduration=$DURATION -Dmail_list=$MAIL_LIST -Denv=$ENV
+    - mvn compile exec:java -Prun-polo-WS -Dsite=$SITE -Dhebergement=$HEBERGEMENT -Ddate=$DATE -Dassurance=$ASSURANCE -Dprestation=$PRESTATION -Durl=$URL -Dduration=$DURATION -Dmail_list=$MAIL_LIST -Denv=$ENV -Dactual_version="${ACTUAL_VERSION}"
   artifacts:
     paths:
       - target/gatling/
@@ -71,9 +72,10 @@ run_polo_web:
     DATEFIN: "15/06/2024"
     COMMENTAIRE: "test perf 30-10-24"
     ENV: "A5"
+    ACTUAL_VERSION: "2.17.0"
   script:
     - mvn clean install -Prun-polo-Web -DprofileIdEnabled=true
-    - mvn compile exec:java -Prun-polo-Web -Dsite="${SITE}" -Durl=$URL -Dduration=$DURATION -Dmail_list=$MAIL_LIST -DdateDebut=$DATEDEBUT -DdateFin=$DATEFIN -Dcommentaire="${COMMENTAIRE}" -Denv=$ENV
+    - mvn compile exec:java -Prun-polo-Web -Dsite="${SITE}" -Durl=$URL -Dduration=$DURATION -Dmail_list=$MAIL_LIST -DdateDebut=$DATEDEBUT -DdateFin=$DATEFIN -Dcommentaire="${COMMENTAIRE}" -Denv=$ENV -Dactual_version="${ACTUAL_VERSION}"
   artifacts:
     paths:
       - target/gatling/

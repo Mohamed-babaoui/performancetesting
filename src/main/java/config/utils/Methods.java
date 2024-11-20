@@ -45,7 +45,7 @@ public class Methods {
         String fromAddress = props.getProperty("fromAddress");
         String destAddresses = props.getProperty("destAddresses");
 
-        String actualVersion = "2.10.0";
+        String actualVersion = System.getProperty("actual_version");
         String env = System.getProperty("env");;
         String url = System.getProperty("url");;
         String duration = System.getProperty("duration");;
@@ -191,7 +191,7 @@ public class Methods {
         String fromAddress = props.getProperty("fromAddress");
         String destAddresses = props.getProperty("destAddresses");
 
-        String actualVersion = "2.10.0";
+        String actualVersion = System.getProperty("actual_version");
         String env = System.getProperty("env");;
         String url = System.getProperty("url");;
         String duration = System.getProperty("duration");;
