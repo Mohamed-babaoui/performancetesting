@@ -20,8 +20,8 @@ public class LoginPage extends BasePage {
     public void goToApp(String url) {
         driver.get(url);
         wait.until(ExpectedConditions.visibilityOfElementLocated(usernameField));
-
     }
+
     public void loginCred(String username, String password) {
         try {
             Thread.sleep(5000);
@@ -30,7 +30,6 @@ public class LoginPage extends BasePage {
         }
         wait.until(ExpectedConditions.elementToBeClickable(usernameField)).sendKeys(username);
         wait.until(ExpectedConditions.elementToBeClickable(passwordField)).sendKeys(password);
-
     }
 
 

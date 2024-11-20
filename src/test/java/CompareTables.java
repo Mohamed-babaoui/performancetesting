@@ -8,8 +8,8 @@ import java.util.Map;
 public class CompareTables {
 
     public static void main(String[] args) {
-        String previousReportPath = "previousReport/output.txt";
-        String currentReportPath = "currentReport/output.txt";
+        String previousReportPath = "previousReport/summary.txt";
+        String currentReportPath = "currentReport/summary.txt";
         String resultFolderPath = "result";
         String outputPath = resultFolderPath + "/comparison_report.csv";
 

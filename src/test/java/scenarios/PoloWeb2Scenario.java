@@ -36,20 +36,20 @@ public class PoloWeb2Scenario {
         }
         testData = new Properties();
         try {
-            testData.load(PoloWeb2Scenario.class.getClassLoader().getResourceAsStream("testdata.properties"));
+            testData.load(PoloWeb2Scenario.class.getClassLoader().getResourceAsStream("testdata2.properties"));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
 
-        baseUrl = System.getProperty("url");
+        baseUrl = testData.getProperty("url");
         username = config.getProperty("username");
         email = config.getProperty("email");
         password = config.getProperty("password");
-        site = System.getProperty("site");
-        dateDebut = System.getProperty("dateDebut");
-        dateFin = System.getProperty("dateFin");
-        commentaire = System.getProperty("commentaire");
-        duration = System.getProperty("duration");
+        site = testData.getProperty("site");
+        dateDebut = testData.getProperty("dateDebut");
+        dateFin = testData.getProperty("dateFin");
+        commentaire = testData.getProperty("commentaire");
+        duration = testData.getProperty("duration");
     }
 
     public ScenarioBuilder mainScenario() {
@@ -63,6 +63,8 @@ public class PoloWeb2Scenario {
                     String driver_id = BrowserManager.createWebDriver("chrome");
                     WebDriver driver = BrowserManager.getWebDriver(driver_id);
                     // Save driver and driver_id in session
+                    System.out.println(driver_id);
+                    System.out.println(driver);
                     session = session.set("driver_id", driver_id);
                     session = session.set("driver", driver);
                     // Init Page Objects
@@ -81,7 +83,7 @@ public class PoloWeb2Scenario {
                     driver.get(baseUrl);
                     return session;
                 })
-                .exec(genericAction("Authorization", session -> {
+                .exec(genericAction("Authorization2", session -> {
                     // Step 1: Authorization
                     LoginPage loginPage = (LoginPage) session.get("loginPage");
                     loginPage.loginCred(username, password);
