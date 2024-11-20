@@ -47,9 +47,10 @@ run_polo_ws:
     URL: "http://azweupljbd03.pvcp.intra:8080/polo-ws/services/WsService?wsdl"
     MAIL_LIST: "mohammed.eljadi@ext.groupepvcp.com,mohammed.babaoui@ext.groupepvcp.com"
     DURATION: "60"
+    ENV: "A5"
   script:
     - mvn clean install -Prun-polo-WS -DprofileIdEnabled=true
-    - mvn compile exec:java -Prun-polo-WS -Dsite=$SITE -Dhebergement=$HEBERGEMENT -Ddate=$DATE -Dassurance=$ASSURANCE -Dprestation=$PRESTATION -Durl=$URL -Dduration=$DURATION -Dmail_list=$MAIL_LIST
+    - mvn compile exec:java -Prun-polo-WS -Dsite=$SITE -Dhebergement=$HEBERGEMENT -Ddate=$DATE -Dassurance=$ASSURANCE -Dprestation=$PRESTATION -Durl=$URL -Dduration=$DURATION -Dmail_list=$MAIL_LIST -Denv=$ENV
   artifacts:
     paths:
       - target/gatling/
