@@ -75,13 +75,13 @@ public class Methods {
         Message msg = new MimeMessage(session);
 
         msg.setFrom(new InternetAddress(fromAddress));
-        String[] emailArray = destAddresses.split(", ");
+        String[] emailArray = destAddresses.split(",");
         InternetAddress[] toAddresses = new InternetAddress[emailArray.length];
         for (int i = 0; i < emailArray.length; i++) {
             toAddresses[i] = new InternetAddress(emailArray[i].trim());
         }
         msg.setRecipients(Message.RecipientType.TO, toAddresses);
-        msg.setSubject("Rapport des tests automatisés - CP");
+        msg.setSubject(String.format("Rapport Tir de Performance POLO WS  [%s]  [%s]", actualVersion, env));
         msg.setSentDate(new Date());
 
         // Construct HTML content with specified text, tables, and image
@@ -118,7 +118,7 @@ public class Methods {
         htmlContent.append("<img src='cid:image' /><br>");
 
         // New data table
-        htmlContent.append(String.format("<h4>Les données du tir (%s):</h4>", formatterDate.format(startDate)));
+        htmlContent.append(String.format("<h4>Les données du tir (%s): [%s]</h4>", formatterDate.format(startDate), actualVersion));
         htmlContent.append("<table border='1' cellpadding='5' cellspacing='0'>")
                 .append("<tr><th>Request Name</th><th>Count</th><th>Average (ms)</th><th>Min (ms)</th>")
                 .append("<th>Max (ms)</th><th>Stdev (ms)</th><th>Error (%)</th><th>Throughput (rq/s)</th></tr>");
@@ -221,13 +221,13 @@ public class Methods {
         Message msg = new MimeMessage(session);
 
         msg.setFrom(new InternetAddress(fromAddress));
-        String[] emailArray = destAddresses.split(", ");
+        String[] emailArray = destAddresses.split(",");
         InternetAddress[] toAddresses = new InternetAddress[emailArray.length];
         for (int i = 0; i < emailArray.length; i++) {
             toAddresses[i] = new InternetAddress(emailArray[i].trim());
         }
         msg.setRecipients(Message.RecipientType.TO, toAddresses);
-        msg.setSubject("Rapport des tests automatisés - CP");
+        msg.setSubject(String.format("Rapport Tir de Performance POLO WEB  [%s]  [%s]", actualVersion, env));
         msg.setSentDate(new Date());
 
         // Construct HTML content with specified text, tables, and image
