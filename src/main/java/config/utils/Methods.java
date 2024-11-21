@@ -43,7 +43,7 @@ public class Methods {
         String smtpHost = props.getProperty("smtpHost");
         String smtpPort = props.getProperty("smtpPort");
         String fromAddress = props.getProperty("fromAddress");
-        String destAddresses = System.getProperty("destAddresses");
+        String destAddresses = System.getProperty("mail_list");
 
         String actualVersion = System.getProperty("actual_version");
         String env = System.getProperty("env");;
@@ -189,7 +189,7 @@ public class Methods {
         String smtpHost = props.getProperty("smtpHost");
         String smtpPort = props.getProperty("smtpPort");
         String fromAddress = props.getProperty("fromAddress");
-        String destAddresses = System.getProperty("destAddresses");
+        String destAddresses = System.getProperty("mail_list");
 
         String actualVersion = System.getProperty("actual_version");
         String env = System.getProperty("env");;
