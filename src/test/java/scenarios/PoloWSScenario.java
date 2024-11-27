@@ -69,12 +69,16 @@ public class PoloWSScenario {
             .body(StringBody(createBookingBody))
             .check(status().is(200))
             .check(bodyString().saveAs("responseBody"))
-    );
+    ).exec(session -> {
+        String bookingId = XMLFileReader.extractValueFromXML(session.getString("responseBody"), "//Transaction/Booking/Price/@Value");
+        session = session.set("bookingId", bookingId);
+        return session;
+    });
 
     private ChainBuilder getBooking = exec(http("GetBooking")
             .post("/")
             .body(StringBody(session -> {
-                String bookingId = XMLFileReader.extractValueFromXML(session.getString("responseBody"), "//Transaction/Booking/Price/@Value");
+                String bookingId = session.getString("bookingId");
                 return XMLFileReader.readXmlWithReplacePlaceholders("src/test/resources/WS/xmlBodies/getBooking.xml", Map.of("booking_id", bookingId));
             })) // Specify the XML body
             .check(status().is(200))
@@ -83,7 +87,7 @@ public class PoloWSScenario {
     private ChainBuilder searchBooking = exec(http("SearchBooking")
             .post("/")
             .body(StringBody(session -> {
-                String bookingId = XMLFileReader.extractValueFromXML(session.getString("responseBody"), "//Transaction/Booking/Price/@Value");
+                String bookingId = session.getString("bookingId");
                 return XMLFileReader.readXmlWithReplacePlaceholders("src/test/resources/WS/xmlBodies/searchBooking.xml", Map.of("booking_id", bookingId));
             })) // Specify the XML body
             .check(status().is(200))
@@ -92,7 +96,7 @@ public class PoloWSScenario {
     private ChainBuilder updateBooking = exec(http("UpdateBooking")
             .post("/")
             .body(StringBody(session -> {
-                String bookingId = XMLFileReader.extractValueFromXML(session.getString("responseBody"), "//Transaction/Booking/Price/@Value");
+                String bookingId = session.getString("bookingId");
                 return XMLFileReader.readXmlWithReplacePlaceholders("src/test/resources/WS/xmlBodies/updateBooking.xml", Map.of("booking_id", bookingId, "Prestation", prestation));
             })) // Specify the XML body
             .check(status().is(200))
@@ -101,7 +105,7 @@ public class PoloWSScenario {
     private ChainBuilder cancelBooking = exec(http("CancelBooking")
             .post("/")
             .body(StringBody(session -> {
-                String bookingId = XMLFileReader.extractValueFromXML(session.getString("responseBody"), "//Transaction/Booking/Price/@Value");
+                String bookingId = session.getString("bookingId");
                 return XMLFileReader.readXmlWithReplacePlaceholders("src/test/resources/WS/xmlBodies/cancelBooking.xml", Map.of("booking_id", bookingId));
             })) // Specify the XML body
             .check(status().is(200))
