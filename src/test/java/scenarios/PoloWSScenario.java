@@ -70,8 +70,9 @@ public class PoloWSScenario {
             .check(status().is(200))
             .check(bodyString().saveAs("responseBody"))
     ).exec(session -> {
-        String bookingId = XMLFileReader.extractValueFromXML(session.getString("responseBody"), "//Transaction/Booking/Price/@Value");
+        String bookingId = XMLFileReader.extractValueFromXML(session.getString("responseBody"), "//Transaction/Booking/Codes/Code[1]/@Value");
         session = session.set("bookingId", bookingId);
+
         return session;
     });
 
