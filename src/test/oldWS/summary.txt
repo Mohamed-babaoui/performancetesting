@@ -1,9 +1,9 @@
 Request Name         Count           Average (ms)    Min (ms)        Max (ms)        Stdev (ms)      Error (%)       Throughput (rq/s)
-GetQALarge           9               4623.44         4518            4857            96.19           0.00            0.45           
-SearchBooking        8               81.00           71              101             8.79            0.00            0.40           
-CancelBooking        8               76.50           70              88              6.18            0.00            0.40           
-GetQAPrecis          8               754.38          597             1130            217.09          0.00            0.40           
-GetBooking           8               80.13           72              98              7.80            0.00            0.40           
-CreateBooking        8               1283.63         702             2846            894.21          0.00            0.40           
-UpdateBooking        8               78.50           70              88              5.66            0.00            0.40           
-Total                57              1060.42         70              4857            1638.80         0.00            2.85           
+GetQALarge           768             1167            1081            1987            56.31           0.00            0.21
+SearchBooking        767             151             139             275             13.87           0.00            0.21
+CancelBooking        767             764             709             1092            33.73           0.00            0.21
+GetQAPrecis          768             380             348             649             25.05           0.00            0.21
+GetBooking           767             178             161             280             15.26           0.00            0.21
+CreateBooking        767             907             843             1786            59.38           0.00            0.21
+UpdateBooking        767             1129            1053            1614            49.8            0.00            0.21
+Total                5371            668             139             1987            401.59          0.00            1.49
