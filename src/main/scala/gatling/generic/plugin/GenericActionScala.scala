@@ -28,7 +28,14 @@ class GenericActionScala(val name: String,
     val result = Try[Status] {
       startTimestamp = clock.nowMillis
       javaapiSession = function.apply(javaapiSession)
-      OK
+
+      // Check for custom KO condition
+      if (javaapiSession.contains("error") && javaapiSession.getString("error") == "true") {
+        message = Option(javaapiSession.getString("errorMessage"))
+        KO // Mark as KO
+      } else {
+        OK // Mark as OK
+      }
     } match {
       case Success(value) =>
         value
@@ -57,7 +64,8 @@ class GenericActionScala(val name: String,
       endTimestamp,
       result,
       None,
-      message)
+      message
+    )
 
     next ! javaapiSession.asScala().logGroupRequestTimings(startTimestamp, endTimestamp)
   }

@@ -26,51 +26,63 @@ public class ReservationPage extends BasePage {
         super(driver);
     }
 
-    public void fillReservationDetails(String comment) {
-        wait.until(ExpectedConditions.elementToBeClickable(commentField)).sendKeys(comment);
-        retryingFindClick(mandatoryGroupAmount);
-        retryingFindClick(amountOption);
-        retryingFindClick(addBeneficiaryButton);
-        retryingFindClick(selectListValueFormatReqAttrLabel);
-        retryingFindClick(selectListValueFormatReqAttrOption);
-        retryingFindClick(addBeneficiaryConfirmButton);
+    public Boolean fillReservationDetails(String comment) {
         try {
+            wait.until(ExpectedConditions.elementToBeClickable(commentField)).sendKeys(comment);
+            retryingFindClick(mandatoryGroupAmount);
+            retryingFindClick(amountOption);
+            retryingFindClick(addBeneficiaryButton);
+            retryingFindClick(selectListValueFormatReqAttrLabel);
+            retryingFindClick(selectListValueFormatReqAttrOption);
+            retryingFindClick(addBeneficiaryConfirmButton);
             Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-        retryingFindClick(serviceDetailsConfirmButton);
-        try {
+            retryingFindClick(serviceDetailsConfirmButton);
             Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-        retryingFindClick(validateOptionButton);
-        try {
+            retryingFindClick(validateOptionButton);
             Thread.sleep(10000);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-        retryingFindClick(assuranceOptionButton);
-        try {
+            retryingFindClick(assuranceOptionButton);
             Thread.sleep(10000);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
+            retryingFindClick(bookingConfirmationOkButton);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
         }
-        retryingFindClick(bookingConfirmationOkButton);
+        return true;
     }
 
 
     public String getBookingNumber() {
-        return wait.until(ExpectedConditions.visibilityOfElementLocated(bookingNumber)).getText().trim();
+        try {
+            Thread.sleep(3000);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+        try {
+            return wait.until(ExpectedConditions.visibilityOfElementLocated(bookingNumber)).getText().trim();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
-    public void clickOkOnBookingConfirmation() {
-
-        retryingFindClick(bookingConfirmationOkButtonLabel);
+    public Boolean clickOkOnBookingConfirmation() {
+        try {
+            retryingFindClick(bookingConfirmationOkButtonLabel);
+            Thread.sleep(3000);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+        return true;
     }
-    public void confirmBooking() {
-        retryingFindClick(goToConfirmation);
-        wait.until(ExpectedConditions.visibilityOfElementLocated(cancelWithoutCharges));
-
+    public Boolean confirmBooking() {
+        try {
+            retryingFindClick(goToConfirmation);
+            wait.until(ExpectedConditions.visibilityOfElementLocated(cancelWithoutCharges));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+        return true;
     }
 }

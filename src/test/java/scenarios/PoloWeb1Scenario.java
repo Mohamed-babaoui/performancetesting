@@ -2,6 +2,7 @@ package scenarios;
 
 import config.utils.BrowserManager;
 import io.gatling.javaapi.core.ScenarioBuilder;
+import io.gatling.javaapi.core.Session;
 import org.openqa.selenium.WebDriver;
 import pages.*;
 
@@ -41,13 +42,13 @@ public class PoloWeb1Scenario {
             throw new RuntimeException(e);
         }
 
-        baseUrl = System.getProperty("url");
+        baseUrl = testData.getProperty("url");
         username = config.getProperty("username");
         password = config.getProperty("password");
-        site = System.getProperty("site");
-        dateDebut = System.getProperty("dateDebut");
-        commentaire = System.getProperty("commentaire");
-        duration = System.getProperty("duration");
+        site = testData.getProperty("site");
+        dateDebut = testData.getProperty("dateDebut");
+        commentaire = testData.getProperty("commentaire");
+        duration = testData.getProperty("duration");
 
         driver_id = BrowserManager.createWebDriver("chrome");
         driver = BrowserManager.getWebDriver(driver_id);
@@ -59,6 +60,7 @@ public class PoloWeb1Scenario {
             .during(this.duration)
             .on(
                 pause(1) // Brief delay to ensure the user is registered as active
+                .exec(Session::markAsSucceeded)
                 .exec(session -> {
                     // Init driver and driver_id
                     /*String driver_id = BrowserManager.createWebDriver("chrome");
@@ -93,45 +95,63 @@ public class PoloWeb1Scenario {
                     System.out.println("login page" + loginPage);
                     loginPage.loginCred(username, password);
                     loginPage.login();
+                    session = session.set("error", true);
+                    session = session.set("errorMessage", "Custom error");
                     return session;
                 }))
                 .exec(session -> {
+                    if (session.getBoolean("error"))
+                        return session;
                     CustomerSearchPage customerSearchPage = (CustomerSearchPage) session.get("customerSearchPage");
                     customerSearchPage.searchCustomerByNameData("SANTIER", "JEAN-MARC", "50350");
                     return session;
                 })
                 .exec(genericAction("FillClientData", session -> {
+                    if (session.getBoolean("error"))
+                        return session;
                     CustomerSearchPage customerSearchPage = (CustomerSearchPage) session.get("customerSearchPage");
                     customerSearchPage.selectCustomer();
                     return session;
                 }))
                 .exec(genericAction("ClientFound", session -> {
+                    if (session.getBoolean("error"))
+                        return session;
                     CustomerSearchPage customerSearchPage = (CustomerSearchPage) session.get("customerSearchPage");
                     customerSearchPage.goToAvailability();
                     return session;
                 }))
                 .exec(session -> {
+                    if (session.getBoolean("error"))
+                        return session;
                     AvailabilityPage availabilityPage = (AvailabilityPage) session.get("availabilityPage");
                     availabilityPage.enterStartDate(dateDebut);
                     availabilityPage.selectSite(site);
                     return session;
                 })
                 .exec(genericAction("SearchAvailability", session -> {
+                    if (session.getBoolean("error"))
+                        return session;
                     AvailabilityPage availabilityPage = (AvailabilityPage) session.get("availabilityPage");
                     availabilityPage.searchAvailability();
                     return session;
                 }))
                 .exec(genericAction("GoToReservationDetail", session -> {
+                    if (session.getBoolean("error"))
+                        return session;
                     AvailabilityPage availabilityPage = (AvailabilityPage) session.get("availabilityPage");
                     availabilityPage.selectDestination();
                     return session;
                 }))
                 .exec(genericAction("FillReservationData", session -> {
+                    if (session.getBoolean("error"))
+                        return session;
                     ReservationPage reservationPage = (ReservationPage) session.get("reservationPage");
                     reservationPage.fillReservationDetails(commentaire);
                     return session;
                 }))
                 .exec(session -> {
+                    if (session.getBoolean("error"))
+                        return session;
                     // Get Booking Number
                     ReservationPage reservationPage = (ReservationPage) session.get("reservationPage");
                     try {
@@ -156,11 +176,15 @@ public class PoloWeb1Scenario {
                     return session;
                 })
                 .exec(genericAction("Confirmation", session -> {
+                    if (session.getBoolean("error"))
+                        return session;
                     ReservationPage reservationPage = (ReservationPage) session.get("reservationPage");
                     reservationPage.confirmBooking();
                     return session;
                 }))
                 .exec(session -> {
+                    if (session.getBoolean("error"))
+                        return session;
                     ConfirmationPage confirmationPage = (ConfirmationPage) session.get("confirmationPage");
                     confirmationPage.cancelBooking();
                     /*BrowserManager.deleteWebDriver((String)session.get("driver_id"));*/

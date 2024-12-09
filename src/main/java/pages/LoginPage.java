@@ -17,25 +17,58 @@ public class LoginPage extends BasePage {
     public LoginPage(WebDriver driver) {
         super(driver);
     }
-    public void goToApp(String url) {
-        driver.get(url);
-        wait.until(ExpectedConditions.visibilityOfElementLocated(usernameField));
+    public Boolean goToApp(String url) {
+        try {
+            driver.get(url);
+            wait.until(ExpectedConditions.visibilityOfElementLocated(usernameField));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+        return true;
     }
 
-    public void loginCred(String username, String password) {
+    public Boolean loginCred(String username, String password) {
         try {
             Thread.sleep(5000);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
         }
-        wait.until(ExpectedConditions.elementToBeClickable(usernameField)).sendKeys(username);
-        wait.until(ExpectedConditions.elementToBeClickable(passwordField)).sendKeys(password);
+        try {
+            wait.until(ExpectedConditions.elementToBeClickable(usernameField)).sendKeys(username);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+
+        try {
+            wait.until(ExpectedConditions.elementToBeClickable(passwordField)).sendKeys(password);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+
+        return true;
     }
 
 
-    public void login() {
-        wait.until(ExpectedConditions.elementToBeClickable(loginButton)).click();
-        wait.until(ExpectedConditions.elementToBeClickable(lastNameField));
+    public Boolean login() {
+        try {
+            wait.until(ExpectedConditions.elementToBeClickable(loginButton)).click();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+
+        try {
+            wait.until(ExpectedConditions.elementToBeClickable(lastNameField));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+
+        return true;
     }
 
 }

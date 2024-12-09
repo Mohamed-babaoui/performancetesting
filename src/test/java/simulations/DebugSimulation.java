@@ -4,6 +4,8 @@ import io.gatling.javaapi.core.Simulation;
 import scenarios.PoloWSScenario;
 import scenarios.PoloWeb1Scenario;
 
+import java.io.IOException;
+
 import static io.gatling.javaapi.core.CoreDsl.*;
 
 public class DebugSimulation extends Simulation {
@@ -24,5 +26,8 @@ public class DebugSimulation extends Simulation {
                                 atOnceUsers(1)
                         )
         ).maxDuration(60); // Total duration of 2 hours
+    }
+
+    public DebugSimulation() throws IOException {
     }
 }

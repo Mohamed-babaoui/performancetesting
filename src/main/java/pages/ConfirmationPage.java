@@ -18,12 +18,17 @@ public class ConfirmationPage extends BasePage {
 
 
 
-    public void cancelBooking() {
-
-        retryingFindClick(cancelWithoutCharges);
-        retryingFindClick(dropdownBookingCancelReason_label);
-        retryingFindClick(dropdownBookingCancelReason_label_choice);
-        retryingFindClick(btnCancelYes);
-        retryingFindClick(lastBtnCancelYes);
+    public Boolean cancelBooking() {
+        try {
+            retryingFindClick(cancelWithoutCharges);
+            retryingFindClick(dropdownBookingCancelReason_label);
+            retryingFindClick(dropdownBookingCancelReason_label_choice);
+            retryingFindClick(btnCancelYes);
+            retryingFindClick(lastBtnCancelYes);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+        return true;
     }
 }

@@ -33,8 +33,8 @@ public class PoloWeb2Simulation extends Simulation {
 
     {
         setUp(
-                scenario2.injectOpen(atOnceUsers(1)),
-                scenario1.injectOpen(atOnceUsers(1))
+                scenario2.injectOpen(atOnceUsers(1))/*,
+                scenario1.injectOpen(atOnceUsers(1))*/
         );
     }
 }

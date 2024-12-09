@@ -23,9 +23,15 @@ public class AvailabilityPage extends BasePage {
     }
 
     // For Scenario1: Without end date
-    public void enterStartDate(String startDate) {
-        wait.until(ExpectedConditions.elementToBeClickable(startDateField)).clear();
-        driver.findElement(startDateField).sendKeys(startDate);
+    public Boolean enterStartDate(String startDate) {
+        try {
+            wait.until(ExpectedConditions.elementToBeClickable(startDateField)).clear();
+            driver.findElement(startDateField).sendKeys(startDate);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+        return true;
     }
 
     // For Scenario2: With end date
@@ -38,49 +44,66 @@ public class AvailabilityPage extends BasePage {
         driver.findElement(endDateField).sendKeys(endDate);
         Thread.sleep(1000);
     }*/
-    public void enterStartAndEndDate(String startDate, String endDate) {
-        WebElement startDateElement = wait.until(ExpectedConditions.elementToBeClickable(startDateField));
-        String originalEndDate = driver.findElement(endDateField).getAttribute("value");
-
-        startDateElement.clear();
-        startDateElement.sendKeys(startDate);
-        driver.findElement(By.tagName("body")).click();
-
-
-
-        // Wait for end date to change from original value
-        wait.until(ExpectedConditions.not(
-                ExpectedConditions.attributeToBe(endDateField, "value", originalEndDate)
-        ));
-
-        WebElement endDateElement = driver.findElement(endDateField);
-        endDateElement.clear();
-        endDateElement.sendKeys(endDate);
-    }
-
-    public void selectSite(String site) {
-        retryingFindClick(panelSearchCriteriaHeader);
+    public Boolean enterStartAndEndDate(String startDate, String endDate) {
         try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
+            WebElement startDateElement = wait.until(ExpectedConditions.elementToBeClickable(startDateField));
+            String originalEndDate = driver.findElement(endDateField).getAttribute("value");
+
+            startDateElement.clear();
+            startDateElement.sendKeys(startDate);
+            driver.findElement(By.tagName("body")).click();
+
+
+
+            // Wait for end date to change from original value
+            wait.until(ExpectedConditions.not(
+                    ExpectedConditions.attributeToBe(endDateField, "value", originalEndDate)
+            ));
+
+            WebElement endDateElement = driver.findElement(endDateField);
+            endDateElement.clear();
+            endDateElement.sendKeys(endDate);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
         }
-        wait.until(ExpectedConditions.elementToBeClickable(siteDropdown)).sendKeys(site);
+        return true;
+    }
+
+    public Boolean selectSite(String site) {
         try {
+            retryingFindClick(panelSearchCriteriaHeader);
             Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
+            wait.until(ExpectedConditions.elementToBeClickable(siteDropdown)).sendKeys(site);
+            Thread.sleep(1000);
+            retryingFindClick(siteOption);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
         }
-        retryingFindClick(siteOption);
+        return true;
     }
 
-    public void searchAvailability() {
-        retryingFindClick(searchButton);
-        wait.until(ExpectedConditions.elementToBeClickable(selectDestinationButton));
+    public Boolean searchAvailability() {
+        try {
+            retryingFindClick(searchButton);
+            wait.until(ExpectedConditions.elementToBeClickable(selectDestinationButton));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+        return true;
     }
 
-    public void selectDestination() {
-        retryingFindClick(selectDestinationButton);
-        wait.until(ExpectedConditions.elementToBeClickable(panelReservation_header));
+    public Boolean selectDestination() {
+
+        try {
+            retryingFindClick(selectDestinationButton);
+            wait.until(ExpectedConditions.elementToBeClickable(panelReservation_header));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+        return true;
     }
 }
