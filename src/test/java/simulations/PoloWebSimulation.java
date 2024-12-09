@@ -10,14 +10,14 @@ import java.io.IOException;
 
 import static io.gatling.javaapi.core.CoreDsl.atOnceUsers;
 
-public class PoloWeb2Simulation extends Simulation {
+public class PoloWebSimulation extends Simulation {
     public PoloWeb2Scenario poloWeb2Scenario = new PoloWeb2Scenario();
     ScenarioBuilder scenario2 = poloWeb2Scenario.mainScenario();
 
     public PoloWeb1Scenario poloWeb1Scenario = new PoloWeb1Scenario();
     ScenarioBuilder scenario1 = poloWeb1Scenario.mainScenario();
 
-    public PoloWeb2Simulation() throws IOException {
+    public PoloWebSimulation() throws IOException {
     }
 
     @Override
@@ -33,8 +33,8 @@ public class PoloWeb2Simulation extends Simulation {
 
     {
         setUp(
-                scenario2.injectOpen(atOnceUsers(1))/*,
-                scenario1.injectOpen(atOnceUsers(1))*/
+                scenario2.injectOpen(atOnceUsers(1)),
+                scenario1.injectOpen(atOnceUsers(1))
         );
     }
 }

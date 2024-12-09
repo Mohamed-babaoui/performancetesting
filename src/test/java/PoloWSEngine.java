@@ -3,14 +3,12 @@ import io.gatling.app.Gatling;
 import io.gatling.core.config.GatlingPropertiesBuilder;
 import org.knowm.xchart.*;
 import simulations.PoloWSSimulation;
-import simulations.PoloWeb1Simulation;
 
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
 import java.util.*;
 
 import org.knowm.xchart.style.Styler;

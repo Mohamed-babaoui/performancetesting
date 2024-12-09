@@ -179,7 +179,7 @@
                         </executions>
                         <configuration>
                             <classpathScope>test</classpathScope>
-                            <mainClass>PoloWeb2Engine</mainClass>
+                            <mainClass>PoloWebEngine</mainClass>
                         </configuration>
                     </plugin>
                 </plugins>

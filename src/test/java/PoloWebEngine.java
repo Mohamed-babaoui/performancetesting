@@ -6,17 +6,12 @@ import org.knowm.xchart.BitmapEncoder;
 import org.knowm.xchart.XYChart;
 import org.knowm.xchart.XYChartBuilder;
 import org.knowm.xchart.style.Styler;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.remote.DesiredCapabilities;
-import org.openqa.selenium.remote.RemoteWebDriver;
-import simulations.PoloWeb1Simulation;
-import simulations.PoloWeb2Simulation;
+import simulations.PoloWebSimulation;
 
 import javax.mail.MessagingException;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
 import java.io.*;
-import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -24,7 +19,7 @@ import java.security.cert.X509Certificate;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-public class PoloWeb2Engine {
+public class PoloWebEngine {
     public static void main(String[] args) throws IOException, MessagingException {
 
         try {
@@ -51,7 +46,7 @@ public class PoloWeb2Engine {
                 .resourcesDirectory(IDEPathHelper.mavenResourcesDirectory.toString())
                 .resultsDirectory(IDEPathHelper.resultsDirectory.toString())
                 .binariesDirectory(IDEPathHelper.mavenBinariesDirectory.toString())
-                .simulationClass(PoloWeb2Simulation.class.getName());
+                .simulationClass(PoloWebSimulation.class.getName());
 
         Gatling.fromMap(props.build());
         Date simulationEnd = new Date(System.currentTimeMillis());
