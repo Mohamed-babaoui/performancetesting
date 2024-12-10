@@ -57,139 +57,123 @@ public class PoloWeb1Scenario {
     public ScenarioBuilder mainScenario() {
 
         return scenario("Polo Web - Scenario 1")
-            .during(this.duration)
-            .on(
-                pause(1) // Brief delay to ensure the user is registered as active
-                .exec(Session::markAsSucceeded)
-                .exec(session -> {
-                    // Init driver and driver_id
+                .during(3600)
+                .on(
+                        pause(1) // Brief delay to ensure the user is registered as active
+                                .exec(Session::markAsSucceeded)
+                                .exec(session -> {
+                                    // Init driver and driver_id
                     /*String driver_id = BrowserManager.createWebDriver("chrome");
                     WebDriver driver = BrowserManager.getWebDriver(driver_id);*/
-                    // Save driver and driver_id in session
-                    System.out.println(driver_id);
-                    System.out.println(driver);
-                    session = session.set("driver_id", driver_id);
-                    session = session.set("driver", driver);
-                    // Init Page Objects
-                    LoginPage loginPage = new LoginPage(driver);
-                    System.out.println("login page" + loginPage);
-                    CustomerSearchPage customerSearchPage = new CustomerSearchPage(driver);
-                    AvailabilityPage availabilityPage = new AvailabilityPage(driver);
-                    ReservationPage reservationPage = new ReservationPage(driver);
-                    ConfirmationPage confirmationPage = new ConfirmationPage(driver);
-                    // Save page objects in session
-                    session = session.set("loginPage", loginPage);
-                    session = session.set("customerSearchPage", customerSearchPage);
-                    session = session.set("availabilityPage", availabilityPage);
-                    session = session.set("reservationPage", reservationPage);
-                    session = session.set("confirmationPage", confirmationPage);
-                    // Launch browser
-                    System.out.println("baseurl = "+baseUrl);
-                    driver.get(baseUrl);
+                                    // Save driver and driver_id in session
+                                    System.out.println(driver_id);
+                                    System.out.println(driver);
+                                    session = session.set("driver_id", driver_id);
+                                    session = session.set("driver", driver);
+                                    // Init Page Objects
+                                    LoginPage loginPage = new LoginPage(driver);
+                                    System.out.println("login page" + loginPage);
+                                    CustomerSearchPage customerSearchPage = new CustomerSearchPage(driver);
+                                    AvailabilityPage availabilityPage = new AvailabilityPage(driver);
+                                    ReservationPage reservationPage = new ReservationPage(driver);
+                                    ConfirmationPage confirmationPage = new ConfirmationPage(driver);
+                                    // Save page objects in session
+                                    session = session.set("loginPage", loginPage);
+                                    session = session.set("customerSearchPage", customerSearchPage);
+                                    session = session.set("availabilityPage", availabilityPage);
+                                    session = session.set("reservationPage", reservationPage);
+                                    session = session.set("confirmationPage", confirmationPage);
+                                    // Launch browser
+                                    try {
+                                        driver.get(baseUrl);
 
-                    return session;
-                })
-                .exec(genericAction("Authorization", session -> {
-                    // Step 1: Authorization
-                    LoginPage loginPage = (LoginPage) session.get("loginPage");
-                    System.out.println("login page" + loginPage);
-                    loginPage.loginCred(username, password);
-                    loginPage.login();
-                    session = session.set("error", true);
-                    session = session.set("errorMessage", "Custom error");
-                    return session;
-                }))
-                .exec(session -> {
-                    if (session.getBoolean("error"))
-                        return session;
-                    CustomerSearchPage customerSearchPage = (CustomerSearchPage) session.get("customerSearchPage");
-                    customerSearchPage.searchCustomerByNameData("SANTIER", "JEAN-MARC", "50350");
-                    return session;
-                })
-                .exec(genericAction("FillClientData", session -> {
-                    if (session.getBoolean("error"))
-                        return session;
-                    CustomerSearchPage customerSearchPage = (CustomerSearchPage) session.get("customerSearchPage");
-                    customerSearchPage.selectCustomer();
-                    return session;
-                }))
-                .exec(genericAction("ClientFound", session -> {
-                    if (session.getBoolean("error"))
-                        return session;
-                    CustomerSearchPage customerSearchPage = (CustomerSearchPage) session.get("customerSearchPage");
-                    customerSearchPage.goToAvailability();
-                    return session;
-                }))
-                .exec(session -> {
-                    if (session.getBoolean("error"))
-                        return session;
-                    AvailabilityPage availabilityPage = (AvailabilityPage) session.get("availabilityPage");
-                    availabilityPage.enterStartDate(dateDebut);
-                    availabilityPage.selectSite(site);
-                    return session;
-                })
-                .exec(genericAction("SearchAvailability", session -> {
-                    if (session.getBoolean("error"))
-                        return session;
-                    AvailabilityPage availabilityPage = (AvailabilityPage) session.get("availabilityPage");
-                    availabilityPage.searchAvailability();
-                    return session;
-                }))
-                .exec(genericAction("GoToReservationDetail", session -> {
-                    if (session.getBoolean("error"))
-                        return session;
-                    AvailabilityPage availabilityPage = (AvailabilityPage) session.get("availabilityPage");
-                    availabilityPage.selectDestination();
-                    return session;
-                }))
-                .exec(genericAction("FillReservationData", session -> {
-                    if (session.getBoolean("error"))
-                        return session;
-                    ReservationPage reservationPage = (ReservationPage) session.get("reservationPage");
-                    reservationPage.fillReservationDetails(commentaire);
-                    return session;
-                }))
-                .exec(session -> {
-                    if (session.getBoolean("error"))
-                        return session;
-                    // Get Booking Number
-                    ReservationPage reservationPage = (ReservationPage) session.get("reservationPage");
-                    try {
-                        Thread.sleep(3000);
-                    } catch (InterruptedException e) {
-                        throw new RuntimeException(e);
-                    }
-                    String bookingNumber = reservationPage.getBookingNumber();
-                    reservationPage.clickOkOnBookingConfirmation();
-                    try {
-                        Thread.sleep(3000);
-                    } catch (InterruptedException e) {
-                        throw new RuntimeException(e);
-                    }
+                                    } catch (Exception e) {
+                                        return session.set("error", true).set("errorMessage", e.getMessage()).markAsFailed();
+                                    }
 
-                    bookingNumber = "";
 
-                    if (bookingNumber == null || bookingNumber.isEmpty() || bookingNumber.isBlank())
-                        throw new RuntimeException("Booking number should not be null");
+                                    return session;
+                                })
+                                .doIf(session -> !session.isFailed()).then(exec(genericAction("Authorization", session -> {
+                                    // Step 1: Authorization
+                                    LoginPage loginPage = (LoginPage) session.get("loginPage");
+                                    if (!loginPage.loginCred(username, password))
+                                        return session.set("error", true).set("errorMessage", "Problem on login").markAsFailed();
+                                    if (!loginPage.login())
+                                        return session.set("error", true).set("errorMessage", "Problem on login").markAsFailed();
+                                    return session;
+                                })))
+                                .doIf(session -> !session.isFailed()).then(exec(session -> {
+                                    CustomerSearchPage customerSearchPage = (CustomerSearchPage) session.get("customerSearchPage");
+                                    if (!customerSearchPage.searchCustomerByNameData("SANTIER", "JEAN-MARC", "50350"))
+                                        return session.set("error", true).set("errorMessage", "Problem on searching customer").markAsFailed();
+                                    return session;
+                                }))
+                                .doIf(session -> !session.isFailed()).then(exec(genericAction("FillClientData", session -> {
+                                    CustomerSearchPage customerSearchPage = (CustomerSearchPage) session.get("customerSearchPage");
+                                    if (!customerSearchPage.selectCustomer())
+                                        return session.set("error", true).set("errorMessage", "Problem on selecting customer").markAsFailed();
+                                    return session;
+                                })))
+                                .doIf(session -> !session.isFailed()).then(exec(genericAction("ClientFound", session -> {
+                                    CustomerSearchPage customerSearchPage = (CustomerSearchPage) session.get("customerSearchPage");
+                                    if (!customerSearchPage.goToAvailability())
+                                        return session.set("error", true).set("errorMessage", "Problem on going to availability").markAsFailed();
+                                    return session;
+                                })))
+                                .doIf(session -> !session.isFailed()).then(exec(session -> {
+                                    AvailabilityPage availabilityPage = (AvailabilityPage) session.get("availabilityPage");
+                                    if (!availabilityPage.enterStartDate(dateDebut))
+                                        return session.set("error", true).set("errorMessage", "Problem on entering start/end date").markAsFailed();
+                                    if (!availabilityPage.selectSite(site))
+                                        return session.set("error", true).set("errorMessage", "Problem on selecting site").markAsFailed();
+                                    return session;
+                                }))
+                                .doIf(session -> !session.isFailed()).then(exec(genericAction("SearchAvailability", session -> {
+                                    AvailabilityPage availabilityPage = (AvailabilityPage) session.get("availabilityPage");
+                                    if (!availabilityPage.searchAvailability())
+                                        return session.set("error", true).set("errorMessage", "Problem on searching availability").markAsFailed();
+                                    return session;
+                                })))
+                                .doIf(session -> !session.isFailed()).then(exec(genericAction("GoToReservationDetail", session -> {
+                                    AvailabilityPage availabilityPage = (AvailabilityPage) session.get("availabilityPage");
+                                    if (!availabilityPage.selectDestination())
+                                        return session.set("error", true).set("errorMessage", "Problem on selecting destination").markAsFailed();
+                                    return session;
+                                })))
+                                .doIf(session -> !session.isFailed()).then(exec(genericAction("FillReservationData", session -> {
+                                    ReservationPage reservationPage = (ReservationPage) session.get("reservationPage");
+                                    if (!reservationPage.fillReservationDetails(commentaire))
+                                        return session.set("error", true).set("errorMessage", "Problem on filling reservation details").markAsFailed();
+                                    return session;
+                                })))
+                                .doIf(session -> !session.isFailed()).then(exec(session -> {
+                                    // Get Booking Number
+                                    ReservationPage reservationPage = (ReservationPage) session.get("reservationPage");
 
-                    session = session.set("bookingNumber", bookingNumber);
-                    return session;
-                })
-                .exec(genericAction("Confirmation", session -> {
-                    if (session.getBoolean("error"))
-                        return session;
-                    ReservationPage reservationPage = (ReservationPage) session.get("reservationPage");
-                    reservationPage.confirmBooking();
-                    return session;
-                }))
-                .exec(session -> {
-                    if (session.getBoolean("error"))
-                        return session;
-                    ConfirmationPage confirmationPage = (ConfirmationPage) session.get("confirmationPage");
-                    confirmationPage.cancelBooking();
-                    /*BrowserManager.deleteWebDriver((String)session.get("driver_id"));*/
-                    return session;
-                })
-            );
+                                    String bookingNumber = reservationPage.getBookingNumber();
+                                    if (bookingNumber == null || bookingNumber.isEmpty() || bookingNumber.isBlank())
+                                        return session.set("error", true).set("errorMessage", "Invalid booking number").markAsFailed();
+
+                                    session = session.set("bookingNumber", bookingNumber);
+                                    if (!reservationPage.clickOkOnBookingConfirmation())
+                                        return session.set("error", true).set("errorMessage", "Problem on clicking booking confirmation").markAsFailed();
+
+                                    return session;
+                                }))
+                                .doIf(session -> !session.isFailed()).then(exec(genericAction("Confirmation", session -> {
+                                    ReservationPage reservationPage = (ReservationPage) session.get("reservationPage");
+                                    if (!reservationPage.confirmBooking())
+                                        return session.set("error", true).set("errorMessage", "Problem on confirm booking").markAsFailed();
+                                    return session;
+                                })))
+                                .doIf(session -> !session.isFailed()).then(exec(session -> {
+                                    ConfirmationPage confirmationPage = (ConfirmationPage) session.get("confirmationPage");
+                                    if (!confirmationPage.cancelBooking())
+                                        return session.set("error", true).set("errorMessage", "problem on cancel booking").markAsFailed();
+                                    /*BrowserManager.deleteWebDriver((String)session.get("driver_id"));*/
+                                    return session;
+                                }))
+                );
     }
 }

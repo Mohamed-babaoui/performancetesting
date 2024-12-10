@@ -14,7 +14,7 @@ public class CustomerSearchPage extends BasePage {
     private By firstNameField = By.id("tabViewIdentification:inputPrenom");
     private By postalCodeField = By.id("tabViewIdentification:inputCodePostal");
     private By emailField = By.id("tabViewIdentification:inputDuChoixDropDown");
-    private By searchButton = By.id("tabViewIdentification:tabItemClientButtonSearch");
+    private By searchButton = By.xpath("//*[@id=\"tabViewIdentification:tabItemClientButtonSearch\"]");
     private By selectCustomerButton = By.xpath("//*[@id='tabViewIdentification:resultatClientCentralBufferTableau:0:btnCreateReservation']");
     private By startDateField = By.id("calendarStartDate_input");
 

@@ -10,7 +10,7 @@ public class ReservationPage extends BasePage {
     private final By mandatoryGroupAmount = By.xpath("//*[@id='ReservationTabViewRepeater:0:panelReservationRepeaterMandatoryGroups:0:mandatoryGroupDatatable:0:mandatoryGroupAmount']");
     private final By amountOption = By.xpath("//*[@id='ReservationTabViewRepeater:0:panelReservationRepeaterMandatoryGroups:0:mandatoryGroupDatatable:0:mandatoryGroupAmount_panel']/div/ul/li[2]");
     //private final By addBeneficiaryButton = By.xpath("//*[contains(@id, 'mandatoryGroupAddBf')]");
-    private final By addBeneficiaryButton = By.xpath("//tbody[@id='ReservationTabViewRepeater:0:panelReservationRepeaterMandatoryGroups:0:mandatoryGroupDatatable_data']/tr[1]/td[9]/button");
+    private final By addBeneficiaryButton = By.xpath("//*[@id=\"ReservationTabViewRepeater:0:panelReservationRepeaterMandatoryGroups:0:mandatoryGroupDatatable:0:j_id_m1:0:mandatoryGroupAddBf\"]");
 
     private final By selectListValueFormatReqAttrLabel = By.xpath("//*[contains(@id, 'selectListValueFormatReqAttr_label')]");
     private final By selectListValueFormatReqAttrOption = By.xpath("//*[contains(@id, 'selectListValueFormatReqAttr_panel')]/div/ul/li[2]");
@@ -18,7 +18,7 @@ public class ReservationPage extends BasePage {
     private final By serviceDetailsConfirmButton = By.xpath("//button[@id='dialogContentBeneficiaryEditionBtnValidate']");
     private final By validateOptionButton = By.xpath("//button[@id='dialogServiceDetailsEditionBtnValidate']");
     //private final By assuranceOptionButton = By.xpath("//button[@id='ReservationTabViewRepeater:0:panelReservationRepeaterMandatoryGroups:1:mandatoryGroupDatatable:2:mandatoryGroupAdd']");
-    private final By assuranceOptionButton=By.xpath("//tbody[@id='ReservationTabViewRepeater:0:panelReservationRepeaterMandatoryGroups:1:mandatoryGroupDatatable_data']/tr[1]/td[9]/button");
+    private final By assuranceOptionButton=By.xpath("//*[@id=\"ReservationTabViewRepeater:0:panelReservationRepeaterMandatoryGroups:1:mandatoryGroupDatatable:2:mandatoryGroupAdd\"]");
 
     private final By bookingConfirmationOkButton = By.xpath("//button[@id='btValidateOption']");
     private final By bookingNumber=By.xpath("//label[@id='bookingConfirmationBookingNbLabel']");

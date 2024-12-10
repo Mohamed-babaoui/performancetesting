@@ -30,7 +30,7 @@ public class LoginPage extends BasePage {
 
     public Boolean loginCred(String username, String password) {
         try {
-            Thread.sleep(5000);
+            Thread.sleep(1000);
         } catch (Exception e) {
             e.printStackTrace();
             return false;
