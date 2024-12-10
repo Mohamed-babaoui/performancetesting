@@ -26,13 +26,13 @@ public class PoloWSScenario {
         System.out.println(props.getProperty("url"));
     }
 
-    private String site = props.getProperty("site");
-    private String hebergement = props.getProperty("hebergement");
-    private String date = props.getProperty("date");
-    private String assurance = props.getProperty("assurance");
-    private String prestation = props.getProperty("prestation");
-    private String url = props.getProperty("url");
-    private int duration = Integer.parseInt(props.getProperty("duration"));
+    private String site = System.getProperty("site");
+    private String hebergement = System.getProperty("hebergement");
+    private String date = System.getProperty("date");
+    private String assurance = System.getProperty("assurance");
+    private String prestation = System.getProperty("prestation");
+    private String url = System.getProperty("url");
+    private int duration = Integer.parseInt(System.getProperty("duration"));
 
     Map<String, String> placeholders = Map.of(
             "Site" , site,
@@ -92,10 +92,7 @@ public class PoloWSScenario {
     private ChainBuilder getBooking = doIf(session -> !session.isFailed()).then(
             exec(http("GetBooking")
                 .post("/")
-                .body(StringBody(session -> {
-                    String bookingId = session.getString("bookingId");
-                    return XMLFileReader.replacePlaceholders(getBookingBody, Map.of("booking_id", bookingId));
-                })) // Specify the XML body
+                .body(StringBody(session -> XMLFileReader.replacePlaceholders(getBookingBody, Map.of("booking_id", session.getString("bookingId"))))) // Specify the XML body
                 .check(status().is(200))
                 .check(substring("<Status Severity=\"Success\"/>"))
             )
@@ -104,10 +101,7 @@ public class PoloWSScenario {
     private ChainBuilder searchBooking = doIf(session -> !session.isFailed()).then(
             exec(http("SearchBooking")
                 .post("/")
-                .body(StringBody(session -> {
-                    String bookingId = session.getString("bookingId");
-                    return XMLFileReader.replacePlaceholders(searchBookingBody, Map.of("booking_id", bookingId));
-                })) // Specify the XML body
+                .body(StringBody(session -> XMLFileReader.replacePlaceholders(searchBookingBody, Map.of("booking_id", session.getString("bookingId"))))) // Specify the XML body
                 .check(status().is(200))
                 .check(substring("<Status Severity=\"Success\"/>"))
             )
@@ -116,10 +110,7 @@ public class PoloWSScenario {
     private ChainBuilder updateBooking = doIf(session -> !session.isFailed()).then(
             exec(http("UpdateBooking")
                 .post("/")
-                .body(StringBody(session -> {
-                    String bookingId = session.getString("bookingId");
-                    return XMLFileReader.replacePlaceholders(updateBookingBody, Map.of("booking_id", bookingId));
-                })) // Specify the XML body
+                .body(StringBody(session -> XMLFileReader.replacePlaceholders(updateBookingBody, Map.of("booking_id", session.getString("bookingId"))))) // Specify the XML body
                 .check(status().is(200))
                 .check(substring("<Status Severity=\"Success\"/>"))
             )
@@ -128,10 +119,7 @@ public class PoloWSScenario {
     private ChainBuilder cancelBooking = doIf(session -> !session.isFailed()).then(
             exec(http("CancelBooking")
                 .post("/")
-                .body(StringBody(session -> {
-                    String bookingId = session.getString("bookingId");
-                    return XMLFileReader.replacePlaceholders(cancelBookingBody, Map.of("booking_id", bookingId));
-                })) // Specify the XML body
+                .body(StringBody(session -> XMLFileReader.replacePlaceholders(cancelBookingBody, Map.of("booking_id", session.getString("bookingId"))))) // Specify the XML body
                 .check(status().is(200))
                 .check(substring("<Status Severity=\"Success\"/>"))
             )
@@ -142,7 +130,7 @@ public class PoloWSScenario {
 
     public ScenarioBuilder mainScenario() {
         return scenario("WSChain")
-                .during(120)
+                .during(this.duration)
                 .on(
                     exec(Session::markAsSucceeded)
                     .exec(getQALarge)
