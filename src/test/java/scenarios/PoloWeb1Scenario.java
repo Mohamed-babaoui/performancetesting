@@ -60,7 +60,7 @@ public class PoloWeb1Scenario {
                 .during(3600)
                 .on(
                         pause(1) // Brief delay to ensure the user is registered as active
-                                .exec(Session::markAsSucceeded)
+                                .exec(session -> session.set("error", false).set("errorMessage", "").markAsSucceeded())
                                 .exec(session -> {
                                     // Init driver and driver_id
                     /*String driver_id = BrowserManager.createWebDriver("chrome");
