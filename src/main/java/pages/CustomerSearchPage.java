@@ -16,7 +16,7 @@ public class CustomerSearchPage extends BasePage {
     private By emailField = By.id("tabViewIdentification:inputDuChoixDropDown");
     private By searchButton = By.xpath("//*[@id=\"tabViewIdentification:tabItemClientButtonSearch\"]");
     private By selectCustomerButton = By.xpath("//*[@id='tabViewIdentification:resultatClientCentralBufferTableau:0:btnCreateReservation']");
-    private By startDateField = By.id("calendarStartDate_input");
+    private By startDateField = By.xpath("//*[@id=\"calendarStartDate_input\"]");
 
     public CustomerSearchPage(WebDriver driver) {
         super(driver);
@@ -25,9 +25,10 @@ public class CustomerSearchPage extends BasePage {
     // For Scenario1: Search by name and postal code
     public Boolean searchCustomerByNameData(String lastName, String firstName, String postalCode) {
         try {
-            wait.until(ExpectedConditions.elementToBeClickable(lastNameField)).sendKeys("SANTIER");
-            wait.until(ExpectedConditions.elementToBeClickable(firstNameField)).sendKeys("JEAN-MARC");
-            wait.until(ExpectedConditions.elementToBeClickable(postalCodeField)).sendKeys("50350");
+            wait.until(ExpectedConditions.elementToBeClickable(lastNameField)).sendKeys(lastName);
+            wait.until(ExpectedConditions.elementToBeClickable(firstNameField)).sendKeys(firstName);
+            wait.until(ExpectedConditions.elementToBeClickable(postalCodeField)).sendKeys(postalCode);
+            driver.findElement(By.tagName("body")).click();
             Thread.sleep(3000);
         } catch (Exception e) {
             e.printStackTrace();
@@ -41,7 +42,8 @@ public class CustomerSearchPage extends BasePage {
     // For Scenario2: Search by email
     public Boolean searchCustomerByEmail(String email) {
         try {
-            wait.until(ExpectedConditions.elementToBeClickable(emailField)).sendKeys("cjmsantier@orange.fr");
+            wait.until(ExpectedConditions.elementToBeClickable(emailField)).sendKeys(email);
+            driver.findElement(By.tagName("body")).click();
             Thread.sleep(2000);
         } catch (Exception e) {
             e.printStackTrace();

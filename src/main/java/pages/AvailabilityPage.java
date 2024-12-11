@@ -9,7 +9,7 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 public class AvailabilityPage extends BasePage {
 
     // Corrected Locators
-    private By startDateField = By.id("calendarStartDate_input");
+    private By startDateField = By.xpath("//*[@id=\"calendarStartDate_input\"]");
     private By endDateField = By.id("calendarEndDate_input");
     private By panelSearchCriteriaHeader = By.id("panelSearchCriteria_header");
     private By siteDropdown = By.id("dropDownSite_input");
@@ -25,6 +25,7 @@ public class AvailabilityPage extends BasePage {
     // For Scenario1: Without end date
     public Boolean enterStartDate(String startDate) {
         try {
+            Thread.sleep(2000);
             wait.until(ExpectedConditions.elementToBeClickable(startDateField)).clear();
             driver.findElement(startDateField).sendKeys(startDate);
         } catch (Exception e) {
@@ -46,6 +47,7 @@ public class AvailabilityPage extends BasePage {
     }*/
     public Boolean enterStartAndEndDate(String startDate, String endDate) {
         try {
+            Thread.sleep(2000);
             WebElement startDateElement = wait.until(ExpectedConditions.elementToBeClickable(startDateField));
             String originalEndDate = driver.findElement(endDateField).getAttribute("value");
 
