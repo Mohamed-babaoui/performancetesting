@@ -141,7 +141,7 @@ public class BrowserManager {
         WebDriver driver = null;
         try {
             driver = new RemoteWebDriver(remoteUrl, options);
-            //    driver = new ChromeDriver(options);
+                //driver = new ChromeDriver(options);
             driver.manage().window().maximize();
         } catch (Exception e){
             e.printStackTrace();

@@ -28,6 +28,7 @@ public class AvailabilityPage extends BasePage {
             Thread.sleep(2000);
             wait.until(ExpectedConditions.elementToBeClickable(startDateField)).clear();
             driver.findElement(startDateField).sendKeys(startDate);
+            driver.findElement(By.tagName("body")).click();
         } catch (Exception e) {
             e.printStackTrace();
             return false;
@@ -47,7 +48,25 @@ public class AvailabilityPage extends BasePage {
     }*/
     public Boolean enterStartAndEndDate(String startDate, String endDate) {
         try {
+            WebElement startDateField = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id=\"calendarStartDate_input\"]")));
+            startDateField.sendKeys(startDate);
+
+            // Pause for 2 seconds
             Thread.sleep(2000);
+
+            // Wait for the end date field to be clickable, clear it, and enter the end date
+            WebElement endDateField = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id=\"calendarEndDate_input\"]")));
+            endDateField.clear();
+            endDateField.sendKeys(endDate);
+
+            // Pause for 2 seconds
+            Thread.sleep(2000);
+
+            // Clear and re-enter the end date (if required by your logic)
+            endDateField = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id=\"calendarEndDate_input\"]")));
+            endDateField.clear();
+            endDateField.sendKeys(endDate);
+        /*    Thread.sleep(2000);
             WebElement startDateElement = wait.until(ExpectedConditions.elementToBeClickable(startDateField));
             String originalEndDate = driver.findElement(endDateField).getAttribute("value");
 
@@ -64,7 +83,7 @@ public class AvailabilityPage extends BasePage {
 
             WebElement endDateElement = driver.findElement(endDateField);
             endDateElement.clear();
-            endDateElement.sendKeys(endDate);
+            endDateElement.sendKeys(endDate);*/
         } catch (Exception e) {
             e.printStackTrace();
             return false;
