@@ -44,15 +44,15 @@ public class PoloWeb2Scenario {
             throw new RuntimeException(e);
         }
 
-        baseUrl = testData.getProperty("url");
+        baseUrl = System.getProperty("url");
         username = config.getProperty("username");
         email = config.getProperty("email");
         password = config.getProperty("password");
-        site = testData.getProperty("site");
-        dateDebut = testData.getProperty("dateDebut");
-        dateFin = testData.getProperty("dateFin");
-        commentaire = testData.getProperty("commentaire");
-        duration = testData.getProperty("duration");
+        site = System.getProperty("site");
+        dateDebut = System.getProperty("dateDebut");
+        dateFin = System.getProperty("dateFin");
+        commentaire = System.getProperty("commentaire");
+        duration = System.getProperty("duration");
 
         driver_id = BrowserManager.createWebDriver("chrome");
         driver = BrowserManager.getWebDriver(driver_id);
@@ -61,7 +61,7 @@ public class PoloWeb2Scenario {
     public ScenarioBuilder mainScenario() {
 
         return scenario("Polo Web - Scenario 2")
-            .during(300)
+            .during(this.duration)
             .on(
                 pause(1) // Brief delay to ensure the user is registered as active
                 .exec(session -> session.set("error", false).set("errorMessage", "").markAsSucceeded())

@@ -28,7 +28,7 @@ public class CustomerSearchPage extends BasePage {
             wait.until(ExpectedConditions.elementToBeClickable(lastNameField)).sendKeys("SANTIER");
             wait.until(ExpectedConditions.elementToBeClickable(firstNameField)).sendKeys("JEAN-MARC");
             wait.until(ExpectedConditions.elementToBeClickable(postalCodeField)).sendKeys("50350");
-            Thread.sleep(1000);
+            Thread.sleep(3000);
         } catch (Exception e) {
             e.printStackTrace();
             return false;
