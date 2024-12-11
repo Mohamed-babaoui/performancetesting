@@ -141,10 +141,16 @@ public class PoloWeb1Scenario {
                                         return session.set("error", true).set("errorMessage", "Problem on selecting destination").markAsFailed();
                                     return session;
                                 })))
+                                .doIf(session -> !session.isFailed()).then(exec(session -> {
+                                    ReservationPage reservationPage = (ReservationPage) session.get("reservationPage");
+                                    if (!reservationPage.fillReservationPredata(commentaire))
+                                        return session.set("error", true).set("errorMessage", "Problem on Pre FillReservationData ").markAsFailed();
+                                    return session;
+                                }))
                                 .doIf(session -> !session.isFailed()).then(exec(genericAction("FillReservationData", session -> {
                                     ReservationPage reservationPage = (ReservationPage) session.get("reservationPage");
-                                    if (!reservationPage.fillReservationDetails(commentaire))
-                                        return session.set("error", true).set("errorMessage", "Problem on filling reservation details").markAsFailed();
+                                    if (!reservationPage.fillReservationDetails())
+                                        return session.set("error", true).set("errorMessage", "Problem on validating filled Data").markAsFailed();
                                     return session;
                                 })))
                                 .doIf(session -> !session.isFailed()).then(exec(session -> {
