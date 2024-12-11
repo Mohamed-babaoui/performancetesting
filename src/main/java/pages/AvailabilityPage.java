@@ -10,7 +10,7 @@ public class AvailabilityPage extends BasePage {
 
     // Corrected Locators
     private By startDateField = By.xpath("//*[@id=\"calendarStartDate_input\"]");
-    private By endDateField = By.id("calendarEndDate_input");
+    private By endDateField = By.xpath("//*[@id=\"calendarEndDate_input\"]");
     private By panelSearchCriteriaHeader = By.id("panelSearchCriteria_header");
     private By siteDropdown = By.id("dropDownSite_input");
   //  private By siteOption = By.xpath("//span[contains(text(),'La Corniche de la Plage')]");
@@ -74,8 +74,8 @@ public class AvailabilityPage extends BasePage {
 
     public Boolean selectSite(String site) {
         try {
-            retryingFindClick(panelSearchCriteriaHeader);
-            Thread.sleep(1000);
+          //  retryingFindClick(panelSearchCriteriaHeader);
+            Thread.sleep(3000);
             wait.until(ExpectedConditions.elementToBeClickable(siteDropdown)).sendKeys(site);
             Thread.sleep(1000);
             retryingFindClick(siteOption);
