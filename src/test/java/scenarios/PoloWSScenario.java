@@ -70,7 +70,7 @@ public class PoloWSScenario {
                 .post("/")
                 .body(StringBody(getQAPrecisBody))
                 .check(status().is(200))
-                .check(substring("<Status Severity=\"Success\"/>")))
+                .check(substring("<Status Severity=\"Succes\"/>")))
     );
 
     private ChainBuilder createBooking = doIf(session -> !session.isFailed()).then(

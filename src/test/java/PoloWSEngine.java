@@ -293,6 +293,8 @@ public class PoloWSEngine {
         long totalDurationMillis = timeBounds[1] - timeBounds[0];
         double totalCount = 0, totalResponseTime = 0, totalErrorCount = 0, totalThroughput = 0;
         List<Long> allResponseTimes = new ArrayList<>();
+        double totalCountOK = 0, totalResponseTimeOK = 0;
+        List<Long> allResponseTimesOK = new ArrayList<>();
 
         String outputFilePath = currentSimulationDir+"/output.txt";
 
@@ -304,21 +306,25 @@ public class PoloWSEngine {
         for (RequestMetrics metrics : metricsMap.values()) {
             writer.printf("%-20s %-15d %-15.2f %-15d %-15d %-15.2f %-15.2f %-15.2f%n",
                     metrics.name, metrics.requestCount, metrics.getAverageResponseTime(),
-                    metrics.minResponseTime, metrics.maxResponseTime, metrics.getStandardDeviation(),
-                    metrics.getErrorPercentage(), metrics.getThroughput(20));
+                    metrics.minResponseTimeOK, metrics.maxResponseTimeOK, metrics.getStandardDeviation(),
+                    metrics.getErrorPercentage(), metrics.getThroughput((int) totalDurationMillis/1000));
 
             totalCount += metrics.requestCount;
             totalResponseTime += metrics.totalResponseTime;
             totalErrorCount += metrics.errorCount;
-            totalThroughput += metrics.getThroughput(20);
+            totalThroughput += metrics.getThroughput((int) totalDurationMillis/1000);
             allResponseTimes.addAll(metrics.responseTimes);
+
+            totalCountOK += metrics.requestCountOK;
+            totalResponseTimeOK += metrics.totalResponseTimeOK;
+            allResponseTimesOK.addAll(metrics.responseTimesOK);
         }
 
 
-        double totalStdev = allResponseTimes.size() > 1 ? calculateStandardDeviation(allResponseTimes) : 0;
+        double totalStdev = allResponseTimesOK.size() > 1 ? calculateStandardDeviation(allResponseTimesOK) : 0;
         writer.printf("%-20s %-15d %-15.2f %-15d %-15d %-15.2f %-15.2f %-15.2f%n", "Total", (int) totalCount,
-                totalResponseTime / totalCount, metricsMap.values().stream().mapToLong(m -> m.minResponseTime).min().orElse(0),
-                metricsMap.values().stream().mapToLong(m -> m.maxResponseTime).max().orElse(0), totalStdev,
+                totalResponseTimeOK / totalCountOK, metricsMap.values().stream().mapToLong(m -> m.minResponseTimeOK).min().orElse(0),
+                metricsMap.values().stream().mapToLong(m -> m.maxResponseTimeOK).max().orElse(0), totalStdev,
                 (totalCount > 0 ? (totalErrorCount / totalCount * 100) : 0), totalThroughput);
 
         writer.flush();
@@ -338,8 +344,11 @@ public class PoloWSEngine {
     static class RequestMetrics {
         String name;
         long totalResponseTime = 0, requestCount = 0, minResponseTime = Long.MAX_VALUE, maxResponseTime = Long.MIN_VALUE;
+        long totalResponseTimeOK = 0, requestCountOK = 0, minResponseTimeOK = Long.MAX_VALUE, maxResponseTimeOK = Long.MIN_VALUE;
+
         int errorCount = 0;
         List<Long> responseTimes = new ArrayList<>();
+        List<Long> responseTimesOK = new ArrayList<>();
 
         RequestMetrics(String name) {
             this.name = name;
@@ -351,20 +360,28 @@ public class PoloWSEngine {
             minResponseTime = Math.min(minResponseTime, responseTime);
             maxResponseTime = Math.max(maxResponseTime, responseTime);
             responseTimes.add(responseTime);
+
+            if (!isError) {
+                requestCountOK++;
+                totalResponseTimeOK += responseTime;
+                minResponseTimeOK = Math.min(minResponseTime, responseTime);
+                maxResponseTimeOK = Math.max(maxResponseTime, responseTime);
+                responseTimesOK.add(responseTime);
+            }
             if (isError) errorCount++;
         }
 
         double getAverageResponseTime() {
-            return requestCount > 0 ? (double) totalResponseTime / requestCount : 0;
+            return requestCountOK > 0 ? (double) totalResponseTimeOK / requestCountOK : 0;
         }
 
         double getThroughput(int totalSimulationTime) {
-            return totalResponseTime > 0 ? (double) requestCount / ((double) totalSimulationTime) : 0;
+            return totalResponseTimeOK > 0 ? (double) requestCountOK / ((double) totalSimulationTime) : 0;
         }
 
         double getStandardDeviation() {
             double mean = getAverageResponseTime();
-            return Math.sqrt(responseTimes.stream().mapToDouble(rt -> Math.pow(rt - mean, 2)).sum() / responseTimes.size());
+            return Math.sqrt(responseTimesOK.stream().mapToDouble(rt -> Math.pow(rt - mean, 2)).sum() / responseTimesOK.size());
         }
 
         double getErrorPercentage() {
