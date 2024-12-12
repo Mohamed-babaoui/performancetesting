@@ -87,15 +87,22 @@ public class PoloWeb2Scenario {
                     session = session.set("reservationPage", reservationPage);
                     session = session.set("confirmationPage", confirmationPage);
                     // Launch browser
-                    try {
+                   /* try {
                         driver.get(baseUrl);
                     } catch (Exception e) {
                         return session.set("error", true).set("errorMessage", e.getMessage()).markAsFailed();
-                    }
+                    }*/
                     return session;
                 })
+                .doIf(session -> !session.isFailed()).then(exec(genericAction("LoginPage", session -> {
+                    // Step 1: LoginPage
+                    LoginPage loginPage = (LoginPage) session.get("loginPage");
+                    if (!loginPage.goToApp(baseUrl))
+                        return session.set("error", true).set("errorMessage", "Problem on going to login page").markAsFailed();
+                    return session;
+                })))
                 .doIf(session -> !session.isFailed()).then(exec(genericAction("Authorization", session -> {
-                    // Step 1: Authorization
+                    // Step 2: Authorization
                     LoginPage loginPage = (LoginPage) session.get("loginPage");
                     if (!loginPage.loginCred(username, password))
                         return session.set("error", true).set("errorMessage", "Problem on login").markAsFailed();
