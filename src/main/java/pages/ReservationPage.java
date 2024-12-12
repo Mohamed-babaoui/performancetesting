@@ -30,7 +30,8 @@ public class ReservationPage extends BasePage {
         super(driver);
     }
 
-    public Boolean fillReservationDetails(String comment) {
+    public Boolean fillReservationPredata(String comment )
+    {
         try {
             wait.until(ExpectedConditions.elementToBeClickable(commentField)).sendKeys(comment);
             retryingFindClick(mandatoryGroupAmount);
@@ -43,10 +44,22 @@ public class ReservationPage extends BasePage {
             retryingFindClick(serviceDetailsConfirmButton);
             Thread.sleep(1000);
             retryingFindClick(validateOptionButton);
-            Thread.sleep(10000);
+            Thread.sleep(5000);
             retryingFindClick(assuranceOptionButton);
-            Thread.sleep(10000);
+            Thread.sleep(5000);
+            wait.until(ExpectedConditions.visibilityOfElementLocated(bookingConfirmationOkButton));
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+        return true;
+
+    }
+    public Boolean fillReservationDetails() {
+        try {
             retryingFindClick(bookingConfirmationOkButton);
+            wait.until(ExpectedConditions.visibilityOfElementLocated(bookingNumber));
         } catch (Exception e) {
             e.printStackTrace();
             return false;

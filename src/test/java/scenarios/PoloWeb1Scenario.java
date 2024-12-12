@@ -42,13 +42,13 @@ public class PoloWeb1Scenario {
             throw new RuntimeException(e);
         }
 
-        baseUrl = testData.getProperty("url");
+        baseUrl = System.getProperty("url");
         username = config.getProperty("username");
         password = config.getProperty("password");
-        site = testData.getProperty("site");
-        dateDebut = testData.getProperty("dateDebut");
-        commentaire = testData.getProperty("commentaire");
-        duration = testData.getProperty("duration");
+        site = System.getProperty("site");
+        dateDebut = System.getProperty("dateDebut");
+        commentaire = System.getProperty("commentaire");
+        duration = System.getProperty("duration");
 
         driver_id = BrowserManager.createWebDriver("chrome");
         driver = BrowserManager.getWebDriver(driver_id);
@@ -57,7 +57,7 @@ public class PoloWeb1Scenario {
     public ScenarioBuilder mainScenario() {
 
         return scenario("Polo Web - Scenario 1")
-                .during(3600)
+                .during(this.duration)
                 .on(
                         pause(1) // Brief delay to ensure the user is registered as active
                                 .exec(session -> session.set("error", false).set("errorMessage", "").markAsSucceeded())
@@ -84,18 +84,25 @@ public class PoloWeb1Scenario {
                                     session = session.set("reservationPage", reservationPage);
                                     session = session.set("confirmationPage", confirmationPage);
                                     // Launch browser
-                                    try {
+                                  /*  try {
                                         driver.get(baseUrl);
 
                                     } catch (Exception e) {
                                         return session.set("error", true).set("errorMessage", e.getMessage()).markAsFailed();
-                                    }
+                                    }*/
 
 
                                     return session;
                                 })
+                                .doIf(session -> !session.isFailed()).then(exec(genericAction("LoginPage", session -> {
+                                    // Step 1: LoginPage
+                                    LoginPage loginPage = (LoginPage) session.get("loginPage");
+                                    if (!loginPage.goToApp(baseUrl))
+                                        return session.set("error", true).set("errorMessage", "Problem on going to login page").markAsFailed();
+                                    return session;
+                                })))
                                 .doIf(session -> !session.isFailed()).then(exec(genericAction("Authorization", session -> {
-                                    // Step 1: Authorization
+                                    // Step 2: Authorization
                                     LoginPage loginPage = (LoginPage) session.get("loginPage");
                                     if (!loginPage.loginCred(username, password))
                                         return session.set("error", true).set("errorMessage", "Problem on login").markAsFailed();
@@ -141,10 +148,16 @@ public class PoloWeb1Scenario {
                                         return session.set("error", true).set("errorMessage", "Problem on selecting destination").markAsFailed();
                                     return session;
                                 })))
+                                .doIf(session -> !session.isFailed()).then(exec(session -> {
+                                    ReservationPage reservationPage = (ReservationPage) session.get("reservationPage");
+                                    if (!reservationPage.fillReservationPredata(commentaire))
+                                        return session.set("error", true).set("errorMessage", "Problem on Pre FillReservationData ").markAsFailed();
+                                    return session;
+                                }))
                                 .doIf(session -> !session.isFailed()).then(exec(genericAction("FillReservationData", session -> {
                                     ReservationPage reservationPage = (ReservationPage) session.get("reservationPage");
-                                    if (!reservationPage.fillReservationDetails(commentaire))
-                                        return session.set("error", true).set("errorMessage", "Problem on filling reservation details").markAsFailed();
+                                    if (!reservationPage.fillReservationDetails())
+                                        return session.set("error", true).set("errorMessage", "Problem on validating filled Data").markAsFailed();
                                     return session;
                                 })))
                                 .doIf(session -> !session.isFailed()).then(exec(session -> {

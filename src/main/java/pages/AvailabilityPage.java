@@ -9,8 +9,8 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 public class AvailabilityPage extends BasePage {
 
     // Corrected Locators
-    private By startDateField = By.id("calendarStartDate_input");
-    private By endDateField = By.id("calendarEndDate_input");
+    private By startDateField = By.xpath("//*[@id=\"calendarStartDate_input\"]");
+    private By endDateField = By.xpath("//*[@id=\"calendarEndDate_input\"]");
     private By panelSearchCriteriaHeader = By.id("panelSearchCriteria_header");
     private By siteDropdown = By.id("dropDownSite_input");
   //  private By siteOption = By.xpath("//span[contains(text(),'La Corniche de la Plage')]");
@@ -25,8 +25,10 @@ public class AvailabilityPage extends BasePage {
     // For Scenario1: Without end date
     public Boolean enterStartDate(String startDate) {
         try {
+            Thread.sleep(2000);
             wait.until(ExpectedConditions.elementToBeClickable(startDateField)).clear();
             driver.findElement(startDateField).sendKeys(startDate);
+            driver.findElement(By.tagName("body")).click();
         } catch (Exception e) {
             e.printStackTrace();
             return false;
@@ -46,6 +48,25 @@ public class AvailabilityPage extends BasePage {
     }*/
     public Boolean enterStartAndEndDate(String startDate, String endDate) {
         try {
+            WebElement startDateField = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id=\"calendarStartDate_input\"]")));
+            startDateField.sendKeys(startDate);
+
+            // Pause for 2 seconds
+            Thread.sleep(2000);
+
+            // Wait for the end date field to be clickable, clear it, and enter the end date
+            WebElement endDateField = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id=\"calendarEndDate_input\"]")));
+            endDateField.clear();
+            endDateField.sendKeys(endDate);
+
+            // Pause for 2 seconds
+            Thread.sleep(2000);
+
+            // Clear and re-enter the end date (if required by your logic)
+            endDateField = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id=\"calendarEndDate_input\"]")));
+            endDateField.clear();
+            endDateField.sendKeys(endDate);
+        /*    Thread.sleep(2000);
             WebElement startDateElement = wait.until(ExpectedConditions.elementToBeClickable(startDateField));
             String originalEndDate = driver.findElement(endDateField).getAttribute("value");
 
@@ -62,7 +83,7 @@ public class AvailabilityPage extends BasePage {
 
             WebElement endDateElement = driver.findElement(endDateField);
             endDateElement.clear();
-            endDateElement.sendKeys(endDate);
+            endDateElement.sendKeys(endDate);*/
         } catch (Exception e) {
             e.printStackTrace();
             return false;
@@ -72,8 +93,8 @@ public class AvailabilityPage extends BasePage {
 
     public Boolean selectSite(String site) {
         try {
-            retryingFindClick(panelSearchCriteriaHeader);
-            Thread.sleep(1000);
+          //  retryingFindClick(panelSearchCriteriaHeader);
+            Thread.sleep(3000);
             wait.until(ExpectedConditions.elementToBeClickable(siteDropdown)).sendKeys(site);
             Thread.sleep(1000);
             retryingFindClick(siteOption);
