@@ -29,7 +29,7 @@ public class CustomerSearchPage extends BasePage {
             wait.until(ExpectedConditions.elementToBeClickable(firstNameField)).sendKeys(firstName);
             wait.until(ExpectedConditions.elementToBeClickable(postalCodeField)).sendKeys(postalCode);
             driver.findElement(By.tagName("body")).click();
-            Thread.sleep(3000);
+            Thread.sleep(2000);
         } catch (Exception e) {
             e.printStackTrace();
             return false;
