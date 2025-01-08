@@ -263,7 +263,7 @@ public class PoloWSEngine {
                 String[] tokens = line.trim().split("\\s+");
                 if (tokens.length < 3) continue;
                 String requestName = tokens[0];
-                double averageMs = Double.parseDouble(tokens[2]);
+                double averageMs = Double.parseDouble(tokens[2].replace(",", "."));
                 averages.put(requestName, averageMs);
             }
         } catch (IOException e) {

@@ -70,7 +70,7 @@ public class PoloWSScenario {
                 .post("/")
                 .body(StringBody(getQAPrecisBody))
                 .check(status().is(200))
-                .check(substring("<Status Severity=\"Succes\"/>")))
+                .check(substring("<Status Severity=\"Success\"/>")))
     );
 
     private ChainBuilder createBooking = doIf(session -> !session.isFailed()).then(
@@ -82,9 +82,9 @@ public class PoloWSScenario {
                 .check(bodyString().saveAs("responseBody"))
             ).exec(session -> {
                 String bookingId = XMLFileReader.extractValueFromXML(session.getString("responseBody"), "//Transaction/Booking/Codes/Code[1]/@Value");
-                session = session.set("bookingId", bookingId);
                 if (bookingId == null || bookingId.isEmpty() || bookingId.isBlank())
                     session = session.markAsFailed();
+                session = session.set("bookingId", bookingId);
                 return session;
             })
     );
