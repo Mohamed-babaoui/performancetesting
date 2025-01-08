@@ -101,11 +101,16 @@ public class PoloWeb2Scenario {
                         return session.set("error", true).set("errorMessage", "Problem on going to login page").markAsFailed();
                     return session;
                 })))
-                .doIf(session -> !session.isFailed()).then(exec(genericAction("Authorization", session -> {
-                    // Step 2: Authorization
+                .doIf(session -> !session.isFailed()).then(exec(session -> {
                     LoginPage loginPage = (LoginPage) session.get("loginPage");
                     if (!loginPage.loginCred(username, password))
                         return session.set("error", true).set("errorMessage", "Problem on login").markAsFailed();
+
+                    return session;
+                }))
+                .doIf(session -> !session.isFailed()).then(exec(genericAction("Authorization", session -> {
+                    // Step 2: Authorization
+                    LoginPage loginPage = (LoginPage) session.get("loginPage");
                     if (!loginPage.login())
                         return session.set("error", true).set("errorMessage", "Problem on login").markAsFailed();
                     return session;
