@@ -33,7 +33,7 @@ public abstract class BasePage {
     }*/
     public void retryingFindClick(By by) {
     int attempts = 0;
-    while (attempts < 5) {
+    while (attempts < 1) {
         try {
             WebElement element = this.wait.until(ExpectedConditions.elementToBeClickable(by));
             element.click();
@@ -43,7 +43,7 @@ public abstract class BasePage {
         }
         attempts++;
     }
-    if (attempts == 5) {
+    if (attempts == 1) {
         try {
             WebElement element = this.driver.findElement(by);
             ((JavascriptExecutor) driver).executeScript("arguments[0].click();", element);
