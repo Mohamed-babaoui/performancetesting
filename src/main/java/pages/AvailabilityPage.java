@@ -108,7 +108,7 @@ public class AvailabilityPage extends BasePage {
     public Boolean searchAvailability() {
         try {
             retryingFindClick(searchButton);
-            wait.until(ExpectedConditions.elementToBeClickable(selectDestinationButton));
+            wait.until(ExpectedConditions.presenceOfElementLocated(selectDestinationButton));
         } catch (Exception e) {
             e.printStackTrace();
             return false;
