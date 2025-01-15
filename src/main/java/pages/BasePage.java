@@ -39,7 +39,7 @@ public abstract class BasePage {
             WebElement element = this.wait.until(ExpectedConditions.elementToBeClickable(by));
             
             // Scroll the element into view
-            ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", element);
+            //((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", element);
             
             // Try clicking the element
             element.click();
@@ -52,7 +52,7 @@ public abstract class BasePage {
             System.out.println("Element click intercepted, retrying...");
             try {
                 WebElement element = this.wait.until(ExpectedConditions.elementToBeClickable(by));
-                ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", element);
+                //((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", element);
                 element.click();
             } catch (Exception exc) {
                 exc.printStackTrace();
