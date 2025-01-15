@@ -33,7 +33,7 @@ public abstract class BasePage {
     }*/
     public void retryingFindClick(By by) {
     int attempts = 0;
-    while (attempts < 5) {
+    while (attempts < 3) {
         try {
             // Wait until the element is clickable
             WebElement element = this.wait.until(ExpectedConditions.elementToBeClickable(by));
@@ -50,12 +50,15 @@ public abstract class BasePage {
 
         } catch (ElementClickInterceptedException e) {
             System.out.println("Element click intercepted, retrying...");
-            // Optionally add some waiting to allow for overlays/pop-ups to disappear
             try {
-                Thread.sleep(500); // Small delay before retry
-            } catch (InterruptedException ex) {
-                Thread.currentThread().interrupt();
+                WebElement element = this.wait.until(ExpectedConditions.elementToBeClickable(by));
+                ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", element);
+                element.click();
+            } catch (Exception exc) {
+                exc.printStackTrace();
             }
+
+
 
         } catch (Exception e) {
             System.out.println("Error during click: " + e.getMessage());
