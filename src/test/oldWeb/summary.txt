@@ -1,9 +1,10 @@
 Request Name         Count           Average (ms)    Min (ms)        Max (ms)        Stdev (ms)      Error (%)       Throughput (rq/s)
-Authorization        108               193         8315            9683            494.75          0.00            0.30
-SearchAvailability   108              1401         1763            1851            27.69           0.00            0.30
-GoToReservationDetail 108               1354         2667            3007            111.70          0.00            0.30
-FillClientData       108               682         1809            2844            398.33          0.00            0.30
-FillReservationData  108               1239        33185           36574           1269.58         0.00            0.30
-ClientFound          107               2473         1275            1404            47.23           0.00            0.30
-Confirmation         107               2057         1568            2172            277.20          0.00            0.20
-Total                105              828         1275            36574           11398.09        0.00            2.00
+LoginPage            108               193         110            675            86.17          0.00            0.30
+Authorization        108               1401        987            3685            455.81          0.00            0.30
+SearchAvailability   108               1239        1116           2207            662.43           0.00            0.30
+GoToReservationDetail 107              2473        1923           3567            130.85          0.00            0.30
+FillClientData       108               1354        624            2331            662.43          0.00            0.30
+FillReservationData  107               2057        1524           3224           308.11         0.00            0.30
+ClientFound          108               682	       511            1300            47.23           0.00            0.30
+Confirmation         105               828         581            2079            277.20          0.00            0.20
+Total                859              1278         110            3685              772.65        0.00            2.00
