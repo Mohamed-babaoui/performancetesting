@@ -33,38 +33,23 @@ public abstract class BasePage {
     }*/
     public void retryingFindClick(By by) {
     int attempts = 0;
-    while (attempts < 5) {
+    while (attempts < 1) {
         try {
-            // Wait until the element is clickable
             WebElement element = this.wait.until(ExpectedConditions.elementToBeClickable(by));
-            
-            // Scroll the element into view
-            ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", element);
-            
-            // Try clicking the element
             element.click();
-            break; // Exit loop if click is successful
-
-        } catch (StaleElementReferenceException e) {
-            System.out.println("Element went stale, retrying...");
-
-        } catch (ElementClickInterceptedException e) {
-            System.out.println("Element click intercepted, retrying...");
-            // Optionally add some waiting to allow for overlays/pop-ups to disappear
-            try {
-                Thread.sleep(500); // Small delay before retry
-            } catch (InterruptedException ex) {
-                Thread.currentThread().interrupt();
-            }
-
+            break;
         } catch (Exception e) {
             System.out.println("Error during click: " + e.getMessage());
-            // As a last resort, use JavaScript to click the element
-            WebElement element = this.driver.findElement(by);
-            ((JavascriptExecutor) driver).executeScript("arguments[0].click();", element);
-            break; // Exit loop after using JS click
         }
         attempts++;
+    }
+    if (attempts == 1) {
+        try {
+            WebElement element = this.driver.findElement(by);
+            ((JavascriptExecutor) driver).executeScript("arguments[0].click();", element);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
 

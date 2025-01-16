@@ -26,13 +26,13 @@ public class PoloWSScenario {
         System.out.println(props.getProperty("url"));
     }
 
-    private String site = props.getProperty("site");
-    private String hebergement = props.getProperty("hebergement");
-    private String date = props.getProperty("date");
-    private String assurance = props.getProperty("assurance");
-    private String prestation = props.getProperty("prestation");
-    private String url = props.getProperty("url");
-    private int duration = Integer.parseInt(props.getProperty("duration"));
+    private String site = System.getProperty("site");
+    private String hebergement = System.getProperty("hebergement");
+    private String date = System.getProperty("date");
+    private String assurance = System.getProperty("assurance");
+    private String prestation = System.getProperty("prestation");
+    private String url = System.getProperty("url");
+    private int duration = Integer.parseInt(System.getProperty("duration"));
 
     Map<String, String> placeholders = Map.of(
             "Site" , site,
@@ -70,7 +70,7 @@ public class PoloWSScenario {
                 .post("/")
                 .body(StringBody(getQAPrecisBody))
                 .check(status().is(200))
-                .check(substring("<Status Severity=\"Succes\"/>")))
+                .check(substring("<Status Severity=\"Success\"/>")))
     );
 
     private ChainBuilder createBooking = doIf(session -> !session.isFailed()).then(
@@ -82,9 +82,9 @@ public class PoloWSScenario {
                 .check(bodyString().saveAs("responseBody"))
             ).exec(session -> {
                 String bookingId = XMLFileReader.extractValueFromXML(session.getString("responseBody"), "//Transaction/Booking/Codes/Code[1]/@Value");
-                session = session.set("bookingId", bookingId);
                 if (bookingId == null || bookingId.isEmpty() || bookingId.isBlank())
                     session = session.markAsFailed();
+                session = session.set("bookingId", bookingId);
                 return session;
             })
     );
