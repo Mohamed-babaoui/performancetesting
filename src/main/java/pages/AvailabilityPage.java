@@ -107,7 +107,8 @@ public class AvailabilityPage extends BasePage {
 
     public Boolean searchAvailability() {
         try {
-            retryingFindClick(searchButton);
+           // retryingFindClick(searchButton);
+            driver.findElement(searchButton).click();
             wait.until(ExpectedConditions.presenceOfElementLocated(selectDestinationButton));
         } catch (Exception e) {
             e.printStackTrace();
