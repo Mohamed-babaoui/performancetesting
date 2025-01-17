@@ -98,6 +98,7 @@ public class AvailabilityPage extends BasePage {
             wait.until(ExpectedConditions.elementToBeClickable(siteDropdown)).sendKeys(site);
             Thread.sleep(1000);
             retryingFindClick(siteOption);
+            Thread.sleep(1000);
         } catch (Exception e) {
             e.printStackTrace();
             return false;
