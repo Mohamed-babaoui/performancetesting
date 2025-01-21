@@ -79,5 +79,6 @@ run_polo_web:
   artifacts:
     paths:
       - target/gatling/
+      - result
   timeout: 3h
 
