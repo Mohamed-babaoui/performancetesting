@@ -6,7 +6,12 @@ import io.gatling.javaapi.core.Session;
 import org.openqa.selenium.WebDriver;
 import pages.*;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Properties;
 
 import static gatling.generic.plugin.GenericDsl.genericAction;
@@ -52,6 +57,7 @@ public class PoloWeb1Scenario {
 
         driver_id = BrowserManager.createWebDriver("chrome");
         driver = BrowserManager.getWebDriver(driver_id);
+
     }
 
     public ScenarioBuilder mainScenario() {
@@ -111,7 +117,7 @@ public class PoloWeb1Scenario {
                                 .doIf(session -> !session.isFailed()).then(exec(genericAction("Authorization", session -> {
                                     // Step 2: Authorization
                                     LoginPage loginPage = (LoginPage) session.get("loginPage");
-                                   if (!loginPage.login())
+                                    if (!loginPage.login())
                                         return session.set("error", true).set("errorMessage", "Problem on login").markAsFailed();
                                     return session;
                                 })))
@@ -173,6 +179,12 @@ public class PoloWeb1Scenario {
                                     if (bookingNumber == null || bookingNumber.isEmpty() || bookingNumber.isBlank())
                                         return session.set("error", true).set("errorMessage", "Invalid booking number").markAsFailed();
 
+                                    try {
+                                        saveBookingNumberToFile(bookingNumber, "result/bookingNumbers.txt");
+                                    } catch (IOException e) {
+                                        return session.set("error", true).set("errorMessage", "Error saving booking number to file: " + e.getMessage()).markAsFailed();
+                                    }
+
                                     session = session.set("bookingNumber", bookingNumber);
                                     if (!reservationPage.clickOkOnBookingConfirmation())
                                         return session.set("error", true).set("errorMessage", "Problem on clicking booking confirmation").markAsFailed();
@@ -193,5 +205,21 @@ public class PoloWeb1Scenario {
                                     return session;
                                 }))
                 );
+    }
+
+    private void saveBookingNumberToFile(String bookingNumber, String filePath) throws IOException {
+        File file = new File(filePath);
+        // Ensure the directory exists
+        file.getParentFile().mkdirs();
+
+        // Format the current timestamp
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        String timestamp = LocalDateTime.now().format(formatter);
+
+        // Write the booking number and timestamp to the file
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(file, true))) { // true for appending
+            writer.write(bookingNumber + " " + timestamp);
+            writer.newLine(); // Move to the next line
+        }
     }
 }
