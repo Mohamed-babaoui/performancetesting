@@ -32,13 +32,7 @@ public abstract class BasePage {
         }
     }*/
     public void retryingFindClick(By by) {
-        try {
-            driver.findElement(by).click();
-        } catch (Exception e) {  // Use 'Exception' (Java is case-sensitive)
-            e.printStackTrace(); // This prints the stack trace of the exception
-        }
-
-    /*int attempts = 0;
+    int attempts = 0;
     while (attempts < 5) {
         try {
             // Wait until the element is clickable
@@ -56,7 +50,12 @@ public abstract class BasePage {
 
         } catch (ElementClickInterceptedException e) {
             System.out.println("Element click intercepted, retrying...");
-
+           /* // Optionally add some waiting to allow for overlays/pop-ups to disappear
+            try {
+                Thread.sleep(500); // Small delay before retry
+            } catch (InterruptedException ex) {
+                Thread.currentThread().interrupt();
+            }*/
 
         } catch (Exception e) {
             System.out.println("Error during click: " + e.getMessage());
@@ -67,7 +66,6 @@ public abstract class BasePage {
         }
         attempts++;
     }
-    */
 }
 
 
