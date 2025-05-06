@@ -11,14 +11,23 @@ public class ReservationPage extends BasePage {
     private final By amountOption = By.xpath("//*[@id='ReservationTabViewRepeater:0:panelReservationRepeaterMandatoryGroups:0:mandatoryGroupDatatable:0:mandatoryGroupAmount_panel']/div/ul/li[2]");
     //private final By addBeneficiaryButton = By.xpath("//*[contains(@id, 'mandatoryGroupAddBf')]");
     private final By addBeneficiaryButton = By.xpath("//*[@id=\"ReservationTabViewRepeater:0:panelReservationRepeaterMandatoryGroups:0:mandatoryGroupDatatable:0:j_id_m1:0:mandatoryGroupAddBf\"]");
-
+    private final By AddBeneficiaryButtonCP=By.xpath("//*[@id=\"ReservationTabViewRepeater:0:panelReservationRepeaterMandatoryGroups:0:mandatoryGroupDatatable_data\"]/tr[1]/td[8]/div/button");
     private final By selectListValueFormatReqAttrLabel = By.xpath("//*[contains(@id, 'selectListValueFormatReqAttr_label')]");
+    private final By selectListValueFormatReqAttrLabelCP = By.xpath("//*[contains(@id, '1:selectListValueFormatReqAttrPack') and contains(@id, 'dataTableOptionalServices2:0:serviceDetailTreeTable')]");
+
     private final By selectListValueFormatReqAttrOption = By.xpath("//*[contains(@id, 'selectListValueFormatReqAttr_panel')]/div/ul/li[2]");
+    private final By selectListValueFormatReqAttrOptionCP = By.xpath("//*[contains(@id, '1:selectListValueFormatReqAttrPack_panel') and contains(@id, 'dataTableOptionalServices2:0:serviceDetailTreeTable')][1]/div/ul/li[2]");
+
     private final By addBeneficiaryConfirmButton = By.xpath("//button[@id='serviceDetailDatatable:0:addBeneficiaryButtonServiceDetailEdition']");//serviceDetailDatatable:0:addBeneficiaryButtonServiceDetailEdition
+    private final By addBeneficiaryConfirmButtonCP = By.xpath("//button[@id='dataTableOptionalServices2:0:serviceDetailTreeTable:0_0_0:addBeneficiaryButtonPackageDetailEdition']");//serviceDetailDatatable:0:addBeneficiaryButtonServiceDetailEdition
+
     private final By serviceDetailsConfirmButton = By.xpath("//button[@id='dialogContentBeneficiaryEditionBtnValidate']");
     private final By validateOptionButton = By.xpath("//button[@id='dialogServiceDetailsEditionBtnValidate']");
+    private final By validateOptionButtonCP = By.xpath("//button[@id='dialogPackageDetailsEditionBtnValidate']");
+
     //private final By assuranceOptionButton = By.xpath("//button[@id='ReservationTabViewRepeater:0:panelReservationRepeaterMandatoryGroups:1:mandatoryGroupDatatable:2:mandatoryGroupAdd']");
     private final By assuranceOptionButton=By.xpath("//*[@id=\"ReservationTabViewRepeater:0:panelReservationRepeaterMandatoryGroups:1:mandatoryGroupDatatable:2:mandatoryGroupAdd\"]");
+    private final By assuranceOptionButtonCP=By.xpath("//button[@id='ReservationTabViewRepeater:0:panelReservationRepeaterMandatoryGroups:1:mandatoryGroupDatatable:3:j_id_m6:0:mandatoryGroupAddForCP']");
 
     private final By bookingConfirmationOkButton = By.xpath("//button[@id='btValidateOption']");
     private final By bookingNumber=By.xpath("//label[@id='bookingConfirmationBookingNbLabel']");
@@ -46,8 +55,36 @@ public class ReservationPage extends BasePage {
             retryingFindClick(validateOptionButton);
             Thread.sleep(5000);
             retryingFindClick(assuranceOptionButton);
+            //Thread.sleep(5000);
+            wait.until(ExpectedConditions.visibilityOfElementLocated(bookingConfirmationOkButton));
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+        return true;
+
+    }
+    public Boolean fillReservationPredataForCP(String comment )
+    {
+        try {
+            wait.until(ExpectedConditions.elementToBeClickable(commentField)).sendKeys(comment);
+            retryingFindClick(mandatoryGroupAmount);
+            retryingFindClick(amountOption);
+            retryingFindClick(AddBeneficiaryButtonCP);
+            retryingFindClick(selectListValueFormatReqAttrLabelCP);
+            retryingFindClick(selectListValueFormatReqAttrOptionCP);
+            retryingFindClick(addBeneficiaryConfirmButtonCP);
+            Thread.sleep(1000);
+            retryingFindClick(serviceDetailsConfirmButton);
+            Thread.sleep(1000);
+            retryingFindClick(validateOptionButtonCP);
+            Thread.sleep(5000);
+            retryingFindClick(assuranceOptionButtonCP);
             Thread.sleep(5000);
             wait.until(ExpectedConditions.visibilityOfElementLocated(bookingConfirmationOkButton));
+            Thread.sleep(5000);
+
 
         } catch (Exception e) {
             e.printStackTrace();

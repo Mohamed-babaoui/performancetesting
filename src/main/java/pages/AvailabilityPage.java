@@ -93,7 +93,7 @@ public class AvailabilityPage extends BasePage {
 
     public Boolean selectSite(String site) {
         try {
-          //  retryingFindClick(panelSearchCriteriaHeader);
+           retryingFindClick(panelSearchCriteriaHeader);
             Thread.sleep(3000);
             wait.until(ExpectedConditions.elementToBeClickable(siteDropdown)).sendKeys(site);
             Thread.sleep(1000);

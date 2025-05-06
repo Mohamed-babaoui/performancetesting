@@ -44,7 +44,7 @@ public class CustomerSearchPage extends BasePage {
         try {
             wait.until(ExpectedConditions.elementToBeClickable(emailField)).sendKeys(email);
             driver.findElement(By.tagName("body")).click();
-            Thread.sleep(2000);
+            Thread.sleep(3000);
         } catch (Exception e) {
             e.printStackTrace();
             return false;

@@ -140,8 +140,8 @@ public class BrowserManager {
         System.out.println("7777777777777777777777777777777777");
         WebDriver driver = null;
         try {
-            driver = new RemoteWebDriver(remoteUrl, options);
-                //driver = new ChromeDriver(options);
+           // driver = new RemoteWebDriver(remoteUrl, options);
+            driver = new ChromeDriver(options);
             driver.manage().window().maximize();
         } catch (Exception e){
             e.printStackTrace();
@@ -193,6 +193,8 @@ public class BrowserManager {
     public static void cleanUpAll() {
         for (WebDriver driver : webDriverMap.values()) {
             if (driver != null) {
+
+
                 driver.close();
                 driver.quit();
             }

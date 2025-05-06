@@ -194,6 +194,41 @@
                 </resources>
             </build>
         </profile>
+        <profile>
+            <id>run-CP-Web</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>exec-maven-plugin</artifactId>
+                        <version>3.0.0</version>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>java</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <classpathScope>test</classpathScope>
+                            <mainClass>CPWebEngine</mainClass>
+                        </configuration>
+                    </plugin>
+                </plugins>
+                <resources>
+                    <resource>
+                        <directory>src/test/resources</directory>
+                        <filtering>true</filtering> <!-- Enable filtering for general resources -->
+                        <excludes>
+                            <exclude>src/test/resources/WS/xmlBodies/**</exclude>
+                        </excludes>
+                    </resource>
+                </resources>
+            </build>
+        </profile>
     </profiles>
 
 </project>
