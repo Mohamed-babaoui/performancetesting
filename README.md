@@ -1,94 +1,88 @@
-# Guide d'exécution des Pipelines GitLab pour les Tests de Performance
+# 🛠️ GitLab Pipeline Execution Guide for Performance Testing
 
-Ce document explique comment exécuter les pipelines **Test de Performance Web** et **Test de Performance WS**, configurer les variables et recevoir les résultats des tests par email.
-
----
-
-## Aperçu des Pipelines
-
-### 1. **Test de Performance Web**
-Ce pipeline teste les performances des applications web.
-
-### 2. **Test de Performance WS**
-Ce pipeline teste les performances des services web (API).
+This document explains how to execute the **Web Performance Test** and **WS Performance Test** pipelines, configure the required variables, and receive test results via email.
 
 ---
 
-## Comment Exécuter les Pipelines
+## 📌 Pipeline Overview
 
-### 1. **Accéder aux Pipelines**
-1. Ouvrez le projet GitLab.
-2. Allez dans **CI/CD > Planification des Pipelines**.
+### 1. **Web Performance Test**
+This pipeline tests the performance of web applications.
 
-![](images/gitlab1.png)
-
-
-### 2. **Exécuter le Pipeline Désiré**
-1. Trouvez le pipeline que vous souhaitez exécuter :
-    - **Test de Performance Web**
-    - **Test de Performance WS**
-
-![](images/gitlab2.png)
-
-2. Cliquez sur le bouton **Play** à droite du pipeline pour l'exécuter manuellement.
-
-![](images/gitlab3.png)
----
-
-## Configuration des Variables
-
-### Visualisation et Modification des Variables
-1. Allez dans **Build > Pipeline schedules**.
-2. Cliquez sur le bouton **Modifier (petit stylo à droite du pipeline)** pour le pipeline désiré.
-
-![](images/gitlab5.png)
-
-3. Modifiez les valeurs selon vos besoins.
-
-![](images/gitlab4.png)
-
-### Variables pour Chaque Pipeline
-
-#### **Test de Performance Web**
-
-| Nom de la Variable  | Description                         | Valeur Exemple                                                                        |
-|---------------------|-------------------------------------|---------------------------------------------------------------------------------------|
-| `SITE`              | Nom du site testé                   | `La Corniche de la Plage`                                                             |
-| `URL`               | URL de la page web                  | `https://polo-booking-a5.pvcp.intra/polo-booking/booking/view/login/screen/login.jsf` |
-| `MAIL_LIST`         | Liste d'emails séparée par des virgules | `mohammed.eljadi@ext.groupepvcp.com,mohammed.babaoui@ext.groupepvcp.com`              |
-| `DURATION`          | Durée du test en secondes           | `3600`                                                                                |
-| `DATEDEBUT`         | Date de début du test               | `01/06/2024`                                                                          |
-| `DATEFIN`           | Date de fin du test                 | `15/06/2024`                                                                          |
-| `COMMENTAIRE`       | Commentaires pour le test           | `test perf 30-10-24`                                                                  |
-| `ENV`               | Tag d'environnement                 | `A5`                                                                                  |
-
-#### **Test de Performance WS**
-
-| Nom de la Variable  | Description                         | Valeur Exemple                                                           |
-|---------------------|-------------------------------------|--------------------------------------------------------------------------|
-| `SITE`              | Nom du site testé                   | `BTP`                                                                    |
-| `HEBERGEMENT`       | Nom de l'environnement d'hébergement | `BTP24X`                                                                 |
-| `DATE`              | Date pour le test                    | `2025-02-25`                                                             |
-| `ASSURANCE`         | Type d'assurance                    | `XXXACPACKDY`                                                            |
-| `PRESTATION`        | Type de prestation                   | `BTPANIMAL`                                                              |
-| `URL`               | Point de terminaison de l'API       | `http://azweupljbd03.pvcp.intra:8080/polo-ws/services/WsService?wsdl`    |
-| `MAIL_LIST`         | Liste d'emails séparée par des virgules | `mohammed.eljadi@ext.groupepvcp.com,mohammed.babaoui@ext.groupepvcp.com` |
-| `DURATION`          | Durée du test en secondes           | `3600`                                                                   |
-| `ENV`               | Tag d'environnement                 | `A5`                                                                     |
+### 2. **WS Performance Test**
+This pipeline tests the performance of web services (APIs).
 
 ---
 
-## Comment Personnaliser les Variables
-1. **Exemple de Pipeline Web :**
-    - Si vous souhaitez tester un autre environnement web :
-        - Modifiez `URL` avec l'URL de l'environnement cible.
-        - Modifiez `ENV` avec la bonne valeur.
-        - Ajustez `DURATION` pour la durée du test.
-        - Ajoutez des destinataires à `MAIL_LIST`.
+## ▶️ How to Run the Pipelines
 
-   Exemple :
-   ```yaml
-   URL=https://test.example.com
-   ENV=T4
-   DURATION=3600
-   MAIL_LIST=tester@example.com
+### 1. Access the Pipelines
+1. Open the GitLab project.
+2. Navigate to **CI/CD > Pipeline Schedules**.
+
+### 2. Run the Desired Pipeline
+1. Locate the pipeline you want to run:
+    - **Web Performance Test**
+    - **WS Performance Test**
+2. Click the **Play** button on the right of the pipeline to trigger it manually.
+
+---
+
+## ⚙️ Variable Configuration
+
+### Viewing and Editing Variables
+1. Go to **CI/CD > Pipeline Schedules**.
+2. Click the **Edit (pencil icon)** next to the desired pipeline.
+3. Modify the variables according to your testing needs.
+
+---
+
+### Variables per Pipeline
+
+#### Web Performance Test
+
+| Variable Name  | Description                          | Example Value                                                                                  |
+|----------------|--------------------------------------|------------------------------------------------------------------------------------------------|
+| `SITE`         | Name of the site under test          | `La Corniche de la Plage`                                                                      |
+| `URL`          | Web page URL                         | `https://polo.com`         |
+| `MAIL_LIST`    | Comma-separated list of emails       | `mail_list`                      |
+| `DURATION`     | Test duration in seconds             | `3600`                                                                                         |
+| `DATEDEBUT`    | Start date of the test               | `01/06/2024`                                                                                   |
+| `DATEFIN`      | End date of the test                 | `15/06/2024`                                                                                   |
+| `COMMENTAIRE`  | Comments for the test                | `test perf 30-10-24`                                                                           |
+| `ENV`          | Environment tag                      | `A5`                                                                                           |
+
+---
+
+#### WS Performance Test
+
+| Variable Name  | Description                          | Example Value                                                                 |
+|----------------|--------------------------------------|------------------------------------------------------------------------------|
+| `SITE`         | Name of the site under test          | `BTP`                                                                        |
+| `HEBERGEMENT`  | Hosting environment name             | `BTP24X`                                                                     |
+| `DATE`         | Date for the test                    | `2025-02-25`                                                                 |
+| `ASSURANCE`    | Type of insurance                    | `XXXACPACKDY`                                                                |
+| `PRESTATION`   | Type of service                      | `BTPANIMAL`                                                                  |
+| `URL`          | API endpoint                         | `wsdl url`        |
+| `MAIL_LIST`    | Comma-separated list of emails       | `mail_list`    |
+| `DURATION`     | Test duration in seconds             | `3600`                                                                       |
+| `ENV`          | Environment tag                      | `A5`                                                                         |
+
+---
+
+## ✏️ How to Customize Variables
+
+### Example: Web Pipeline
+
+To test a different web environment:
+
+- Update `URL` with the target environment's URL.
+- Set `ENV` to the appropriate value.
+- Adjust `DURATION` as needed.
+- Add the recipients in `MAIL_LIST`.
+
+```yaml
+URL=https://test.example.com
+ENV=T4
+DURATION=3600
+MAIL_LIST=tester@example.com
