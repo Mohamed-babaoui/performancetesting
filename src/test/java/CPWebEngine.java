@@ -75,7 +75,7 @@ public class CPWebEngine {
 
         System.out.println("1111111111111111111111111111111111111111111111111111111111111");
 
-        String oldFilePath = "src/test/oldCP/summary.txt";
+        String oldFilePath = "src/test/oldCPWeb/summary.txt";
         String newFilePath = currentSimulationDir+"/output.txt";
         String outputFilePath = currentSimulationDir+"/compare.txt";
 
@@ -96,7 +96,7 @@ public class CPWebEngine {
             createAndSaveLineChart(elapsedTimesByRequestType, responseTimesByRequestType, currentSimulationDir+"/graph.png");
         }
 
-        String content = Files.readString(Path.of("src/test/oldCP/info.txt"));
+        String content = Files.readString(Path.of("src/test/oldCPWeb/info.txt"));
         String oldStartDate = content.split(",")[0];
         String oldVersion = content.split(",")[1];
         Methods.sendMailWeb(currentSimulationDir+"/graph.png", newFilePath, oldFilePath, outputFilePath, simulationStart, simulationEnd, conclusion, oldStartDate, oldVersion);
